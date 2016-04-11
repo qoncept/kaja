@@ -1,57 +1,38 @@
 package jp.co.qoncept.kaja
 
-class Decoded<T> {
-    val value: T?
-    val exception: DecodeException?
-
-    companion object {
-        fun <T> success(value: T): Decoded<T> {
-            return Decoded(value, null)
-        }
-
-        fun <T> failure(exception: DecodeException): Decoded<T> {
-            return Decoded(null, exception)
-        }
+abstract sealed class Decoded<T> {
+    class Success<T>(value: T): Decoded<T>() {
+        // TODO
     }
 
-    private constructor(value: T?, exception: DecodeException?) {
-        this.value = value
-        this.exception = exception
+    class Failure<T>(exception: DecodeException): Decoded<T>() {
+        // TODO
     }
-}
 
-fun <T> Decoded<T>.or(alternative: T): T {
-    // TODO
-}
+    abstract val value: T?
+    abstract val exception: DecodeException?
 
-fun <T> Decoded<T>.or(alternative: Decoded<T>): Decoded<T> {
-    // TODO
-}
+    abstract fun <T> or(alternative: T): T
 
-fun <T> Decoded<T>.ifMissingKey(alternative: T): Decoded<T> {
-    // TODO
-}
+    abstract fun <T> or(alternative: Decoded<T>): Decoded<T>
 
-fun <T, U> Decoded<T>.map(transform: (T) -> U): Decoded<U> {
-    // TODO
-}
+    abstract fun <T> ifMissingKey(alternative: T): Decoded<T>
 
-fun <T, U> Decoded<T>.flatMap(transform: (T) -> Decoded<U>): Decoded<U> {
-    // TODO
-}
+    abstract fun <T, U> map(transform: (T) -> U): Decoded<U>
 
-fun <T, U> Decoded<T>.apply(transform: Decoded<(T) -> U>): Decoded<U> {
-    // TODO
+    abstract fun <T, U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>
+
+    abstract fun <T, U> apply(transform: Decoded<(T) -> U>): Decoded<U>
 }
 
 fun <T> Decoded<Decoded<T>>.flatten(): Decoded<T> {
     // TODO
 }
 
-fun <T> pure(value: T): Decoded<T> {
-    return Decoded.success(value)
-}
-
 fun <T, U> Decoded<(T) -> U>.ap(value: T): Decoded<U> {
     // TODO
+}
+
+fun <T> pure(value: T): Decoded<T> {
+    return Decoded.success(value)
 }
