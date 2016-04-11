@@ -31,7 +31,7 @@ open class Json {
     constructor(value: Map<String, Json>) {
         // TODO
     }
-    
+
     companion object {
         fun parse(string: String): Json {
             // TODO
@@ -90,3 +90,6 @@ fun Json.get(key: String): Json {
     // TODO
 }
 
+fun <T> Json.list(decode: (Json) -> Decoded<T>): Decoded<List<T>> {
+    // TODO
+}
