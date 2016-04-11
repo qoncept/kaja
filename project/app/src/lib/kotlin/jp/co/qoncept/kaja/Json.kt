@@ -1,38 +1,64 @@
 package jp.co.qoncept.kaja
 
+import org.json.JSONArray
+import org.json.JSONObject
 import java.io.File
 import java.io.InputStream
 
-class Json {
-    constructor(value: Boolean) {
+abstract sealed class Json {
+    class Boolean(val value: kotlin.Boolean) : Json() {
         // TODO
     }
 
-    constructor(value: Int) {
+    class Number(val value: kotlin.Number) : Json() {
         // TODO
     }
 
-    constructor(value: Long) {
+    class String(val value: kotlin.String) : Json() {
         // TODO
     }
 
-    constructor(value: Double) {
+    class Array(val value: JSONArray) : Json() {
         // TODO
     }
 
-    constructor(value: String) {
+    class Object(val value: JSONObject) : Json() {
         // TODO
     }
 
-    constructor(value: List<Json>) {
-        // TODO
-    }
-
-    constructor(value: Map<String, Json>) {
+    class Null : Json() {
         // TODO
     }
 
     companion object {
+        fun of(value: Boolean): Json {
+            // TODO
+        }
+
+        fun of(value: Int): Json {
+            // TODO
+        }
+
+        fun of(value: Long): Json {
+            // TODO
+        }
+
+        fun of(value: Double): Json {
+            // TODO
+        }
+
+        fun of(value: String): Json {
+            // TODO
+        }
+
+        fun of(value: List<Json>): Json {
+            // TODO
+        }
+
+        fun of(value: Map<String, Json>): Json {
+            // TODO
+        }
+
         fun parse(string: String): Json {
             // TODO
         }
@@ -49,47 +75,24 @@ class Json {
             // TODO
         }
     }
-}
 
-val Json.boolean: Decoded<Boolean>
-    get() {
+    abstract val boolean: Decoded<Boolean>
+
+    abstract val int: Decoded<Int>
+
+    abstract val long: Decoded<Long>
+
+    abstract val double: Decoded<Double>
+
+    abstract val string: Decoded<String>
+
+    abstract val list: Decoded<List<Json>>
+
+    abstract val map: Decoded<Map<String, Json>>
+
+    abstract fun get(key: String): Json
+
+    fun <T> list(decode: (Json) -> Decoded<T>): Decoded<List<T>> {
         // TODO
     }
-
-val Json.int: Decoded<Int>
-    get() {
-        // TODO
-    }
-
-val Json.long: Decoded<Long>
-    get() {
-        // TODO
-    }
-
-val Json.double: Decoded<Double>
-    get() {
-        // TODO
-    }
-
-val Json.string: Decoded<String>
-    get() {
-        // TODO
-    }
-
-val Json.list: Decoded<List<Json>>
-    get() {
-        // TODO
-    }
-
-val Json.map: Decoded<Map<String, Json>>
-    get() {
-        // TODO
-    }
-
-fun Json.get(key: String): Json {
-    // TODO
-}
-
-fun <T> Json.list(decode: (Json) -> Decoded<T>): Decoded<List<T>> {
-    // TODO
 }
