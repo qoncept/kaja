@@ -56,7 +56,7 @@ val Json.boolean: Decoded<Boolean>
         // TODO
     }
 
-val Json.integer: Decoded<Int>
+val Json.int: Decoded<Int>
     get() {
         // TODO
     }
@@ -71,7 +71,7 @@ val Json.double: Decoded<Double>
         // TODO
     }
 
-val Json.string: Decoded<Boolean>
+val Json.string: Decoded<String>
     get() {
         // TODO
     }
