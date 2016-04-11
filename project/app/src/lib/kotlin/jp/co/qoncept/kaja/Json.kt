@@ -3,7 +3,7 @@ package jp.co.qoncept.kaja
 import java.io.File
 import java.io.InputStream
 
-open class Json {
+class Json {
     constructor(value: Boolean) {
         // TODO
     }
