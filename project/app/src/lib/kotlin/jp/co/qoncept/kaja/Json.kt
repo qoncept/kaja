@@ -4,48 +4,48 @@ import java.io.File
 import java.io.InputStream
 
 open class Json {
-    constructor(string: String) {
+    constructor(value: Boolean) {
         // TODO
     }
 
-    constructor(byteArray: ByteArray) {
+    constructor(value: Int) {
         // TODO
     }
 
-    constructor(inputStream: InputStream) {
+    constructor(value: Long) {
         // TODO
     }
 
-    constructor(file: File) {
+    constructor(value: Double) {
         // TODO
     }
 
+    constructor(value: String) {
+        // TODO
+    }
+
+    constructor(value: List<Json>) {
+        // TODO
+    }
+
+    constructor(value: Map<String, Json>) {
+        // TODO
+    }
+    
     companion object {
-        fun of(value: Boolean): Json {
+        fun parse(string: String): Json {
             // TODO
         }
 
-        fun of(value: Int): Json {
+        fun parse(byteArray: ByteArray): Json {
             // TODO
         }
 
-        fun of(value: Long): Json {
+        fun parse(inputStream: InputStream): Json {
             // TODO
         }
 
-        fun of(value: Double): Json {
-            // TODO
-        }
-
-        fun of(value: String): Json {
-            // TODO
-        }
-
-        fun of(value: List<Json>): Json {
-            // TODO
-        }
-
-        fun of(value: Map<String, Json>): Json {
+        fun parse(file: File): Json {
             // TODO
         }
     }
