@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Documents/work/Qoncept/programs/kaja/project/app/app.iml" filepath="$USER_HOME$/Documents/work/Qoncept/programs/kaja/project/app/app.iml" />
-      <module fileurl="file://$USER_HOME$/Documents/work/Qoncept/programs/kaja/project/project.iml" filepath="$USER_HOME$/Documents/work/Qoncept/programs/kaja/project/project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project.iml" filepath="$PROJECT_DIR$/project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
