@@ -1,6 +1,6 @@
 package jp.co.qoncept.kaja
 
-abstract sealed class Decoded<T> {
+sealed class Decoded<out T> {
     class Success<T>(value: T): Decoded<T>() {
         private val _value: T = value
 
@@ -20,7 +20,7 @@ abstract sealed class Decoded<T> {
 
         override fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U> {
             return when(transform) {
-                is Success -> this.map { transform._value(it) }
+                is Success -> pure(transform._value(_value))
                 is Failure -> Failure(transform.exception!!)
             }
         }
