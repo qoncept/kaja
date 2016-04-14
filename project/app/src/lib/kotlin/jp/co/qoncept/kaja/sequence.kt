@@ -1,7 +1,7 @@
 package jp.co.qoncept.kaja
 
-public fun <T> sequence(xs: List<Decoded<T>>): Decoded<List<T>> {
-    var accum = List<Decoded<T>>()
+public fun <T> sequence(xs: List<Decoded<T>>): Decoded<ArrayList<T>> {
+    var accum = ArrayList<Decoded<T>>()
 
     for (x in xs) {
         when x {
@@ -13,8 +13,8 @@ public fun <T> sequence(xs: List<Decoded<T>>): Decoded<List<T>> {
     return pure(accum)
 }
 
-public fun <Key, Value> sequence(xs: Map<Key, Decoded<Value>>): Decoded<Map, Value> {
-    var accum = Map<Key, Value>
+public fun <Key, Value> sequence(xs: Map<Key, Decoded<Value>>): Decoded<HashMap<Key, Value>> {
+    var accum = HashMap<Key, Value>
 
     for (key, x) in xs {
         when x {
@@ -23,5 +23,5 @@ public fun <Key, Value> sequence(xs: Map<Key, Decoded<Value>>): Decoded<Map, Val
         }
     }
 
-    pure(accum)
+    return pure(accum)
 }
