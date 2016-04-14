@@ -47,10 +47,9 @@ abstract sealed class Json {
             }
         override val double: Decoded<Double>
             get() = {
-                if (value is Double) {
-                    pure(value)
-                } else {
-                    Decoded.Failure(TypeMismatchException(value, "Double"))
+                when value {
+                    is Int, is Long, is Double -> pure((Double) value)
+                    else -> Decoded.Failure(TypeMismatchException(value, "kotlin.Number"))
                 }
             }
         override val string: Decoded<String>
