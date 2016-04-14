@@ -7,88 +7,137 @@ import java.io.InputStream
 
 abstract sealed class Json {
     class Boolean(val value: kotlin.Boolean) : Json() {
-        val boolean: Decoded<Boolean> = Decoded.Success(value)
-        val int: Decoded<Int> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        val long: Decoded<Long> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        val double: Decoded<Double> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        val string: Decoded<String> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        val list: Decoded<List<Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        val map: Decoded<Map<String, Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        fun get(key: String): Json= Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val boolean: Decoded<Boolean>
+                get() = Decoded.Success(value)
+        override val int: Decoded<Int>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val long: Decoded<Long>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val double: Decoded<Double>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val string: Decoded<String>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val list: Decoded<List<Json>>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override val map: Decoded<Map<String, Json>>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        override fun get(key: String): Json {
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
+        }
     }
 
     class Number(val value: kotlin.Number) : Json() {
-        val boolean: Decoded<Boolean> = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
-        val int: Decoded<Int> = {
-            if (value is Int) {
-                Decoded.Success(value)
-            } else {
-                Decoded.Failure(TypeMismatchException(value, "Int"))
+        override val boolean: Decoded<Boolean>
+                get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
+        override val int: Decoded<Int>
+            get() = {
+                if (value is Int) {
+                    Decoded.Success(value)
+                } else {
+                    Decoded.Failure(TypeMismatchException(value, "Int"))
+                }
             }
-        }
-        val long: Decoded<Long> = {
-            if (value is Long) {
-                Decoded.Success(value)
-            } else {
-                Decoded.Failure(TypeMismatchException(value, "Long"))
+        override val long: Decoded<Long>
+            get() = {
+                if (value is Long) {
+                    Decoded.Success(value)
+                } else {
+                    Decoded.Failure(TypeMismatchException(value, "Long"))
+                }
             }
-        }
-        val double: Decoded<Double> = {
-            if (value is Double) {
-                Decoded.Success(value)
-            } else {
-                Decoded.Failure(TypeMismatchException(value, "Double"))
+        override val double: Decoded<Double>
+            get() = {
+                if (value is Double) {
+                    Decoded.Success(value)
+                } else {
+                    Decoded.Failure(TypeMismatchException(value, "Double"))
+                }
             }
+        override val string: Decoded<String>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
+        override val list: Decoded<List<Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
+        override val map: Decoded<Map<String, Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
+        fun get(key: String): Json {
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
         }
-        val string: Decoded<String> = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
-        val list: Decoded<List<Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
-        val map: Decoded<Map<String, Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
-        fun get(key: String): Json = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
     }
 
     class String(val value: kotlin.String) : Json() {
-        val boolean: Decoded<Boolean> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        val int: Decoded<Int> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        val long: Decoded<Long> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        val double: Decoded<Double> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        val string: Decoded<String> = Decoded.Success(value)
-        val list: Decoded<List<Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        val map: Decoded<Map<String, Json>> = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
-        fun get(key: String): Json = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val boolean: Decoded<Boolean>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val int: Decoded<Int>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val long: Decoded<Long>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val double: Decoded<Double>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val string: Decoded<String>
+            get() = Decoded.Success(value)
+        override val list: Decoded<List<Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override val map: Decoded<Map<String, Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        override fun get(key: String): Json {
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
+        }
     }
 
     class Array(val value: JSONArray) : Json() {
-        val boolean: Decoded<Boolean> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        val int: Decoded<Int> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        val long: Decoded<Long> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        val double: Decoded<Double> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        val string: Decoded<String> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        val list: Decoded<List<Json> = {
-            val list = List<Json>()
-            for (i in this.value.length()) {
-                list.add(this.value.get(i))
+        override val boolean: Decoded<Boolean>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override val int: Decoded<Int>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override val long: Decoded<Long>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override val double: Decoded<Double>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override val string: Decoded<String>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override val list: Decoded<List<Json>
+            get () = {
+                val list = List<Json>()
+                for (i in this.value.length()) {
+                    list.add(this.value[i]))
+                }
+                return Decoded.success(list)
             }
-            return Decoded.success(list)
+        override val map: Decoded<Map<String, Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "Array"))
+        override fun get(key: String): Json {
+            return Decoded.Failure(TypeMismatchException(this, "Array"))
         }
-        val map: Decoded<Map<String, Json>> = Decoded.Failure(TypeMismatchException(this, "Array"))
-        fun get(key: String): Json = Decoded.Failure(TypeMismatchException(this, "Array"))
     }
 
     class Object(val value: JSONObject) : Json() {
-        val boolean: Decoded<Boolean> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val int: Decoded<Int> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val long: Decoded<Long> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val double: Decoded<Double> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val string: Decoded<String> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val list: Decoded<List<Json>> = Decoded.Failure(TypeMismatchException(this, "Object"))
-        val map: Decoded<Map<String, Json>> = {
-            val map = Map<String, Json>()
-            for (string, in this.value.keys()) {
-                map.put(string, this.value.get(string))
+        override val boolean: Decoded<Boolean>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val int: Decoded<Int>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val long: Decoded<Long>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val double: Decoded<Double>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val string: Decoded<String>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val list: Decoded<List<Json>>
+            get() = Decoded.Failure(TypeMismatchException(this, "Object"))
+        override val map: Decoded<Map<String, Json>>
+            get() = {
+                val map = Map<String, Json>()
+                for (string, in this.value.keys()) {
+                    map.put(string, this.value[string]))
+                }
+                return map
             }
-            return map
+        override fun get(key: String): Json {
+            if (map[key] != nil) {
+                return Decoded.Success(map[key])
+            } else {
+                Decoded.Failure(MissingKeyException(this, key))
+            }
         }
-        fun get(key: String): Json = map[key] != nil ? Decoded.Success(map[key]) : Decoded.Failure(MissingKeyException(this, key))
     }
 
     class Null : Json() {
@@ -183,11 +232,11 @@ abstract sealed class Json {
         when this {
             is Json.Array -> {
                 val list = List<T>()
-                for (i in this.value.length()) {
-                    if !(decode(this.value.get(i)).value != null) {
-                        return Decoded.Failure(TypeMismatchException(this.value.get(i), T.class))
+                for (element in this.value) {
+                    when decode(element) {
+                        is Decoded.Success -> list.add(decode(element).value)
+                        else -> return decode(element)
                     }
-                    list.add((T) this.value.get(i))
                 }
                 return Decoded.success(list)
             }
