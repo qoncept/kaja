@@ -1,6 +1,6 @@
 package jp.co.qoncept.kaja
 
-sealed class Decoded<out T> {
+sealed class Decoded<T> {
     class Success<T>(value: T): Decoded<T>() {
         private val _value: T = value
 
