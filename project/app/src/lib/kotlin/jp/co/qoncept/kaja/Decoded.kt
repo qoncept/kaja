@@ -105,3 +105,33 @@ fun <T, U> Decoded<(T) -> U>.ap(value: Decoded<T>): Decoded<U> {
 fun <T> pure(value: T): Decoded<T> {
     return Decoded.Success(value)
 }
+
+operator fun Decoded<Json>.get(key: String): Decoded<Json> {
+
+}
+
+val Decoded<Json>.boolean: Decoded<Boolean>
+    get() = {}
+
+
+val Decoded<Json>.int: Decoded<Int>
+    get() = {}
+
+
+val Decoded<Json>.long: Decoded<Long>
+    get() = {}
+
+
+val Decoded<Json>.double: Decoded<Double>
+    get() = {}
+
+
+val Decoded<Json>.string: Decoded<String>
+    get() = {}
+
+
+val Decoded<Json>.list: Decoded<List<Json>>
+    get() = {}
+
+val Decoded<Json>.map: Decoded<Map<String, Json>>
+    get() = {}
