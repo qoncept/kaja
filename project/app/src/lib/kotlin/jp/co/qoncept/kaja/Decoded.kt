@@ -107,31 +107,30 @@ fun <T> pure(value: T): Decoded<T> {
 }
 
 operator fun Decoded<Json>.get(key: String): Decoded<Json> {
-
+    return this.flatMap { it.get(key) }
 }
 
 val Decoded<Json>.boolean: Decoded<Boolean>
-    get() = {}
-
+    get() = this.flatMap { it.boolean }
 
 val Decoded<Json>.int: Decoded<Int>
-    get() = {}
+    get() = this.flatMap { it.int }
 
 
 val Decoded<Json>.long: Decoded<Long>
-    get() = {}
+    get() = this.flatMap { it.long }
 
 
 val Decoded<Json>.double: Decoded<Double>
-    get() = {}
+    get() = this.flatMap { it.double }
 
 
 val Decoded<Json>.string: Decoded<String>
-    get() = {}
+    get() = this.flatMap { it.string }
 
 
 val Decoded<Json>.list: Decoded<List<Json>>
-    get() = {}
+    get() = this.flatMap { it.list }
 
 val Decoded<Json>.map: Decoded<Map<String, Json>>
-    get() = {}
+    get() = this.flatMap { it.map }

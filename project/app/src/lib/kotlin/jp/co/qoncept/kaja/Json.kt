@@ -23,7 +23,7 @@ abstract sealed class Json {
         override val map: Decoded<Map<kotlin.String, Json>>
             get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         override fun get(key: kotlin.String): Decoded<Json> {
-            return Json.Null()
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         }
     }
 
@@ -54,7 +54,7 @@ abstract sealed class Json {
         override val map: Decoded<Map<kotlin.String, Json>>
             get() = Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
         override fun get(key: kotlin.String): Decoded<Json> {
-            return Json.Null()
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.Number"))
         }
     }
 
@@ -74,7 +74,7 @@ abstract sealed class Json {
         override val map: Decoded<Map<kotlin.String, Json>>
             get() = Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
         override fun get(key: kotlin.String): Decoded<Json> {
-            return Json.Null()
+            return Decoded.Failure(TypeMismatchException(this, "kotlin.String"))
         }
     }
 
@@ -100,7 +100,7 @@ abstract sealed class Json {
         override val map: Decoded<Map<kotlin.String, Json>>
             get() = Decoded.Failure(TypeMismatchException(this, "Array"))
         override fun get(key: kotlin.String): Decoded<Json> {
-            return Json.Null()
+            return Decoded.Failure(TypeMismatchException(this, "Array"))
         }
 
 
@@ -137,12 +137,12 @@ abstract sealed class Json {
         override fun get(key: kotlin.String): Decoded<Json> {
             val element = value[key]
             return when (element) {
-                is kotlin.Boolean -> Json.Boolean(element)
-                is kotlin.Number -> Json.Number(element)
-                is kotlin.String -> Json.String(element)
-                is JSONArray -> Json.Array(element)
-                is JSONObject -> Json.Object(element)
-                else -> Json.Null()
+                is kotlin.Boolean -> pure(Json.Boolean(element))
+                is kotlin.Number -> pure(Json.Number(element))
+                is kotlin.String -> pure(Json.String(element))
+                is JSONArray -> pure(Json.Array(element))
+                is JSONObject -> pure(Json.Object(element))
+                else -> Decoded.Failure(MissingKeyException(this, key))
             }
         }
     }
@@ -163,7 +163,7 @@ abstract sealed class Json {
         override val map: Decoded<Map<kotlin.String, Json>>
             get() = Decoded.Failure(TypeMismatchException(this, "Null"))
         override fun get(key: kotlin.String): Decoded<Json> {
-            return Json.Null()
+            return Decoded.Failure(TypeMismatchException(this, "Null"))
         }
     }
 
