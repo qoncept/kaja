@@ -29,6 +29,10 @@ sealed class Decoded<T> {
             return this
         }
 
+        override fun nullIfMissingKey(): Decoded<T?> {
+            return pure(_value)
+        }
+
         override fun or(alternative: Decoded<T>): Decoded<T> {
             return this
         }
@@ -69,6 +73,13 @@ sealed class Decoded<T> {
             }
         }
 
+        override fun nullIfMissingKey(): Decoded<T?> {
+            return when(_exception) {
+                is MissingKeyException -> Success(null)
+                else -> Failure(_exception)
+            }
+        }
+
         override fun or(alternative: Decoded<T>): Decoded<T> {
             return alternative
         }
@@ -87,6 +98,8 @@ sealed class Decoded<T> {
 
     abstract fun ifMissingKey(alternative: T): Decoded<T>
 
+    abstract fun nullIfMissingKey(): Decoded<T?>
+
     abstract fun <U> map(transform: (T) -> U): Decoded<U>
 
     abstract fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>
@@ -98,10 +111,14 @@ fun <T> Decoded<Decoded<T>>.flatten(): Decoded<T> {
     return this.flatMap { it }
 }
 
-fun <T, U> Decoded<(T) -> U>.ap(value: Decoded<T>): Decoded<U> {
+infix fun <T, U> Decoded<(T) -> U>.ap(value: Decoded<T>): Decoded<U> {
     return value.apply(this)
 }
 
 fun <T> pure(value: T): Decoded<T> {
     return Decoded.Success(value)
+}
+
+infix fun <T, U> ((T) -> U).mp(value: Decoded<T>): Decoded<U> {
+    return value.map(this)
 }
