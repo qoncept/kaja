@@ -105,6 +105,24 @@ sealed class Decoded<T> {
     abstract fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>
 
     abstract fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U>
+
+    override fun equals(other: Any?): Boolean{
+        if (this === other) return true
+        if (other?.javaClass != javaClass) return false
+
+        other as Decoded<*>
+
+        if (value != other.value) return false
+        if (exception != other.exception) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int{
+        var result = value?.hashCode() ?: 0
+        result += 31 * result + (exception?.hashCode() ?: 0)
+        return result
+    }
 }
 
 fun <T> Decoded<Decoded<T>>.flatten(): Decoded<T> {
