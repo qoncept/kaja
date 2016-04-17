@@ -119,9 +119,10 @@ sealed class Decoded<T> {
     }
 
     override fun hashCode(): Int{
-        var result = value?.hashCode() ?: 0
-        result += 31 * result + (exception?.hashCode() ?: 0)
-        return result
+        return when(this) {
+            is Success -> value!!.hashCode() + 31 * 17
+            is Failure -> exception!!.hashCode() + 31 * 17
+        }
     }
 }
 
