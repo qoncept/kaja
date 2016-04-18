@@ -197,21 +197,19 @@ abstract sealed class Json {
             return Json.Object(JSONObject(value))
         }
 
-        fun parse(string: kotlin.String): Json {
-            val jsonObject = try {
-                Json.Object(JSONObject(string))
+        fun parse(string: kotlin.String): Decoded<Json> {
+            return try {
+                pure(Json.Object(JSONObject(string)))
             } catch (e: JSONException) {
-                Json.Null
+                Decoded.Failure(ParseException(e))
             }
-
-            return jsonObject
         }
 
-        fun parse(byteArray: ByteArray): Json {
+        fun parse(byteArray: ByteArray): Decoded<Json> {
             return parse(byteArray.toString())
         }
 
-        fun parse(inputStream: InputStream): Json {
+        fun parse(inputStream: InputStream): Decoded<Json> {
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
             val string = bufferedReader.lineSequence().toString()
             bufferedReader.close()
@@ -219,7 +217,7 @@ abstract sealed class Json {
             return parse(string)
         }
 
-        fun parse(file: File): Json {
+        fun parse(file: File): Decoded<Json> {
             return parse(FileInputStream(file))
         }
     }
