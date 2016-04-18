@@ -40,6 +40,21 @@ sealed class Decoded<T> {
         override fun or(alternative: T): T {
             return _value
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other?.javaClass != javaClass) return false
+
+            other as Decoded.Success<*>
+
+            if (value != other.value) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return _value?.hashCode() ?: 0
+        }
     }
 
     class Failure<T>(exception: DecodeException): Decoded<T>() {
@@ -87,6 +102,21 @@ sealed class Decoded<T> {
         override fun or(alternative: T): T {
             return alternative
         }
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other?.javaClass != javaClass) return false
+
+            other as Decoded.Failure<*>
+
+            if (exception != other.exception) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return _exception.hashCode()
+        }
     }
     abstract val value: T?
 
@@ -105,25 +135,6 @@ sealed class Decoded<T> {
     abstract fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>
 
     abstract fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U>
-
-    override fun equals(other: Any?): Boolean{
-        if (this === other) return true
-        if (other?.javaClass != javaClass) return false
-
-        other as Decoded<*>
-
-        if (value != other.value) return false
-        if (exception != other.exception) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int{
-        return when(this) {
-            is Success -> value!!.hashCode() + 31 * 17
-            is Failure -> exception!!.hashCode() + 31 * 17
-        }
-    }
 }
 
 fun <T> Decoded<Decoded<T>>.flatten(): Decoded<T> {
