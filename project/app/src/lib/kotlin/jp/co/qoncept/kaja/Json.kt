@@ -135,19 +135,20 @@ abstract sealed class Json {
                 return pure(result)
             }
         override fun get(key: kotlin.String): Decoded<Json> {
-            val element = value[key]
+            val element = value.opt(key)
             return when (element) {
                 is kotlin.Boolean -> pure(Json.Boolean(element))
                 is kotlin.Number -> pure(Json.Number(element))
                 is kotlin.String -> pure(Json.String(element))
                 is JSONArray -> pure(Json.Array(element))
+                JSONObject.NULL -> pure(Json.Null)
                 is JSONObject -> pure(Json.Object(element))
                 else -> Decoded.Failure(MissingKeyException(this, key))
             }
         }
     }
 
-    class Null : Json() {
+    object Null : Json() {
         override val boolean: Decoded<kotlin.Boolean>
             get() = Decoded.Failure(TypeMismatchException(this, "Null"))
         override val int: Decoded<Int>
@@ -200,7 +201,7 @@ abstract sealed class Json {
             val jsonObject = try {
                 Json.Object(JSONObject(string))
             } catch (e: JSONException) {
-                Json.Null()
+                Json.Null
             }
 
             return jsonObject
