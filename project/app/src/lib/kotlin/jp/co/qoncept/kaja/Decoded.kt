@@ -105,3 +105,32 @@ fun <T, U> Decoded<(T) -> U>.ap(value: Decoded<T>): Decoded<U> {
 fun <T> pure(value: T): Decoded<T> {
     return Decoded.Success(value)
 }
+
+operator fun Decoded<Json>.get(key: String): Decoded<Json> {
+    return this.flatMap { it.get(key) }
+}
+
+val Decoded<Json>.boolean: Decoded<Boolean>
+    get() = this.flatMap { it.boolean }
+
+val Decoded<Json>.int: Decoded<Int>
+    get() = this.flatMap { it.int }
+
+
+val Decoded<Json>.long: Decoded<Long>
+    get() = this.flatMap { it.long }
+
+
+val Decoded<Json>.double: Decoded<Double>
+    get() = this.flatMap { it.double }
+
+
+val Decoded<Json>.string: Decoded<String>
+    get() = this.flatMap { it.string }
+
+
+val Decoded<Json>.list: Decoded<List<Json>>
+    get() = this.flatMap { it.list }
+
+val Decoded<Json>.map: Decoded<Map<String, Json>>
+    get() = this.flatMap { it.map }
