@@ -42,12 +42,9 @@ sealed class Decoded<T> {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) return true
             if (other !is Decoded.Success<*>) return false
 
-            if (_value != other._value) return false
-
-            return true
+            return _value == other._value
         }
 
         override fun hashCode(): Int {
@@ -102,12 +99,9 @@ sealed class Decoded<T> {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) return true
             if (other !is Decoded.Failure<*>) return false
 
-            if (_exception != other._exception) return false
-
-            return true
+            return _exception == other._exception
         }
 
         override fun hashCode(): Int {
