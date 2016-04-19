@@ -43,11 +43,9 @@ sealed class Decoded<T> {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other?.javaClass != javaClass) return false
+            if (other !is Decoded.Success<*>) return false
 
-            other as Decoded.Success<*>
-
-            if (value != other.value) return false
+            if (_value != other._value) return false
 
             return true
         }
@@ -105,11 +103,9 @@ sealed class Decoded<T> {
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true
-            if (other?.javaClass != javaClass) return false
+            if (other !is Decoded.Failure<*>) return false
 
-            other as Decoded.Failure<*>
-
-            if (exception != other.exception) return false
+            if (_exception != other._exception) return false
 
             return true
         }
