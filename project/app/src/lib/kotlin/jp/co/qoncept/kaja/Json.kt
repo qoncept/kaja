@@ -93,7 +93,15 @@ abstract sealed class Json {
             get() {
                 val list = ArrayList<Json>()
                 for (i in 0..value.length()-1) {
-                    list.add(value[i] as Json)
+                    val element = value[i]
+                    list.add(when (element) {
+                        is kotlin.Boolean -> Json.Boolean(element)
+                        is kotlin.Number -> Json.Number(element)
+                        is kotlin.String -> Json.String(element)
+                        is JSONArray -> Json.Array(element)
+                        is Json -> element
+                        else -> Json.Object(element as JSONObject)
+                    })
                 }
                 return pure(list)
             }
@@ -130,7 +138,16 @@ abstract sealed class Json {
             get() {
                 val result = HashMap<kotlin.String, Json>()
                 for (key in value.keys()) {
-                    result.put(key, value[key] as Json)
+                    val element = value[key]
+                    result.put(key, when (element) {
+                        is kotlin.Boolean -> Json.Boolean(element)
+                        is kotlin.Number -> Json.Number(element)
+                        is kotlin.String -> Json.String(element)
+                        is JSONArray -> Json.Array(element)
+                        is Json -> element
+                        JSONObject.NULL -> Json.Null
+                        else -> Json.Object(element as JSONObject)
+                    })
                 }
                 return pure(result)
             }
@@ -190,11 +207,19 @@ abstract sealed class Json {
         }
 
         fun of(value: List<Json>): Json {
-            return Json.Array(JSONArray(value))
+            val jsonArray = JSONArray()
+            for (element in value) {
+                jsonArray.put(element)
+            }
+            return Json.Array(jsonArray)
         }
 
-        fun of(value: Map<String, Json>): Json {
-            return Json.Object(JSONObject(value))
+        fun of(value: Map<kotlin.String, Json>): Json {
+            val jsonObject = JSONObject()
+            for ((key, element) in value) {
+                jsonObject.put(key, element)
+            }
+            return Json.Object(jsonObject)
         }
 
         fun parse(string: kotlin.String): Decoded<Json> {
@@ -206,12 +231,12 @@ abstract sealed class Json {
         }
 
         fun parse(byteArray: ByteArray): Decoded<Json> {
-            return parse(byteArray.toString())
+            return parse(String(byteArray))
         }
 
         fun parse(inputStream: InputStream): Decoded<Json> {
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-            val string = bufferedReader.lineSequence().toString()
+            val string = bufferedReader.lineSequence().joinToString()
             bufferedReader.close()
 
             return parse(string)
