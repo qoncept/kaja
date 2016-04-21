@@ -65,6 +65,11 @@ class DecodedTest {
         fun testAp() {
             assertThat((pure({ a: Int -> a.toString() }) ap value), `is`(pure("1")))
         }
+
+        @Test
+        fun testMp() {
+            assertThat(({ it: Int -> it.toString() } mp value), `is`(pure("1")))
+        }
     }
 
 
@@ -121,6 +126,11 @@ class DecodedTest {
         fun testAp() {
             assertThat((pure({ a: Int -> a.toString() }) ap value).exception?.message, `is`(message))
         }
+
+        @Test
+        fun testMp() {
+            assertThat(({ it: Int -> it.toString() } mp value).exception?.message, `is`(message))
+        }
     }
 
     class TypeMismatchFailureTest {
@@ -176,6 +186,11 @@ class DecodedTest {
         fun testAp() {
             assertThat((pure({ a: Int -> a.toString() }) ap value).exception?.message, `is`(message))
         }
+
+        @Test
+        fun testMp() {
+            assertThat(({ it: Int -> it.toString() } mp value).exception?.message, `is`(message))
+        }
     }
 
     class FlattenTest {
@@ -191,3 +206,4 @@ class DecodedTest {
         }
     }
 }
+
