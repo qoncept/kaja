@@ -13,6 +13,77 @@ import org.junit.runner.RunWith
 @RunWith(Enclosed::class)
 class DecodedTest {
 
+    class BasicTest {
+        private fun <A, B, C, D> curry(function: (A, B, C) -> D): (A) -> (B) -> (C) -> D {
+            return { a -> { b -> { c -> function(a, b, c) } } }
+        }
+
+        private data class Person(val firstName: String, val lastName: String, val age: Int?)
+
+        @Test
+        fun testBasic() {
+            run {
+                val firstName: Decoded<String> = Decoded.Success("Qon")
+                val lastName: Decoded<String> = Decoded.Success("cept")
+                val age: Decoded<Int?> = Decoded.Success(1)
+                val result: Decoded<Person> =
+                        (curry(::Person)
+                                mp firstName
+                                ap lastName
+                                ap age)
+                assertThat(result.value?.firstName, `is`("Qon"))
+                assertThat(result.value?.lastName, `is`("cept"))
+                assertThat(result.value?.age, `is`(1))
+            }
+            run {
+                val firstName: Decoded<String> = Decoded.Failure(MissingKeyException(Json.of(""), "firstName", null))
+                val lastName: Decoded<String> = Decoded.Success("cept")
+                val age: Decoded<Int?> = Decoded.Success(1)
+                val result: Decoded<Person> =
+                        (curry(::Person)
+                                mp firstName
+                                ap lastName
+                                ap age)
+                assertThat(result.exception?.message, `is`("MissingKey(firstName)"))
+            }
+            run {
+                val firstName: Decoded<String> = Decoded.Success("Qon")
+                val lastName: Decoded<String> = Decoded.Failure(MissingKeyException(Json.of(""), "lastName", null))
+                val age: Decoded<Int?> = Decoded.Success(1)
+                val result: Decoded<Person> =
+                        (curry(::Person)
+                                mp firstName
+                                ap lastName
+                                ap age)
+                assertThat(result.exception?.message, `is`("MissingKey(lastName)"))
+            }
+            run {
+                val firstName: Decoded<String> = Decoded.Success("Qon")
+                val lastName: Decoded<String> = Decoded.Success("cept")
+                val age: Decoded<Int?> = Decoded.Failure(TypeMismatchException(Json.of(""), "Int", null))
+                val message = age.exception?.message
+                val result: Decoded<Person> =
+                        (curry(::Person)
+                                mp firstName
+                                ap lastName
+                                ap age)
+                assertThat(result.exception?.message, `is`(message))
+            }
+            run {
+                val firstName: Decoded<String> = Decoded.Failure(MissingKeyException(Json.of(""), "firstName", null))
+                val lastName: Decoded<String> = Decoded.Failure(MissingKeyException(Json.of(""), "lastName", null))
+                val age: Decoded<Int?> = Decoded.Failure(TypeMismatchException(Json.of(""), "Int", null))
+                val result: Decoded<Person> =
+                        (curry(::Person)
+                                mp firstName
+                                ap lastName
+                                ap age)
+                assertThat(result.exception?.message, `is`("MissingKey(firstName)"))
+            }
+        }
+    }
+
+
     class SuccessTest {
         val value: Decoded<Int> = pure(1)
 
