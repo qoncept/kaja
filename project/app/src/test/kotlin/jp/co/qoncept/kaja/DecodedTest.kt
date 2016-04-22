@@ -44,7 +44,7 @@ class DecodedTest {
                                 mp firstName
                                 ap lastName
                                 ap age)
-                assertThat(result.exception?.message, `is`("MissingKey(firstName)"))
+                assertThat(result.exception, `is`(firstName.exception))
             }
             run {
                 val firstName: Decoded<String> = Decoded.Success("Qon")
@@ -55,19 +55,18 @@ class DecodedTest {
                                 mp firstName
                                 ap lastName
                                 ap age)
-                assertThat(result.exception?.message, `is`("MissingKey(lastName)"))
+                assertThat(result.exception, `is`(lastName.exception))
             }
             run {
                 val firstName: Decoded<String> = Decoded.Success("Qon")
                 val lastName: Decoded<String> = Decoded.Success("cept")
                 val age: Decoded<Int?> = Decoded.Failure(TypeMismatchException(Json.of(""), "Int", null))
-                val message = age.exception?.message
                 val result: Decoded<Person> =
                         (curry(::Person)
                                 mp firstName
                                 ap lastName
                                 ap age)
-                assertThat(result.exception?.message, `is`(message))
+                assertThat(result.exception, `is`(age.exception))
             }
             run {
                 val firstName: Decoded<String> = Decoded.Failure(MissingKeyException(Json.of(""), "firstName", null))
@@ -78,7 +77,7 @@ class DecodedTest {
                                 mp firstName
                                 ap lastName
                                 ap age)
-                assertThat(result.exception?.message, `is`("MissingKey(firstName)"))
+                assertThat(result.exception, `is`(firstName.exception))
             }
         }
     }
@@ -146,7 +145,6 @@ class DecodedTest {
 
     class MissingKeyFailureTest {
         val value: Decoded<Int> = Decoded.Failure(MissingKeyException(Json.of("a"), "width", null))
-        val message: String = "MissingKey(width)"
 
         @Test
         fun testGetValue() {
@@ -155,7 +153,7 @@ class DecodedTest {
 
         @Test
         fun testGetException() {
-            assertThat(value.exception?.message, `is`(message))
+            assertThat(value.exception, `is`(value.exception))
         }
 
         @Test
@@ -180,33 +178,32 @@ class DecodedTest {
 
         @Test
         fun testMap() {
-            assertThat(value.map { it.toString() }.exception?.message, `is`(message))
+            assertThat(value.map { it.toString() }.exception, `is`(value.exception))
         }
 
         @Test
         fun testFlatMap() {
-            assertThat(value.flatMap { pure(it.toString()) }.exception?.message, `is`(message))
+            assertThat(value.flatMap { pure(it.toString()) }.exception, `is`(value.exception))
         }
 
         @Test
         fun testApply() {
-            assertThat(value.apply(pure({ a: Int -> a.toString() })).exception?.message, `is`(message))
+            assertThat(value.apply(pure({ a: Int -> a.toString() })).exception, `is`(value.exception))
         }
 
         @Test
         fun testAp() {
-            assertThat((pure({ a: Int -> a.toString() }) ap value).exception?.message, `is`(message))
+            assertThat((pure({ a: Int -> a.toString() }) ap value).exception, `is`(value.exception))
         }
 
         @Test
         fun testMp() {
-            assertThat(({ it: Int -> it.toString() } mp value).exception?.message, `is`(message))
+            assertThat(({ it: Int -> it.toString() } mp value).exception, `is`(value.exception))
         }
     }
 
     class TypeMismatchFailureTest {
         val value: Decoded<Int> = Decoded.Failure(TypeMismatchException(Json.of("a"), "Int", null))
-        val message: String = value.exception!!.message!!
 
         @Test
         fun testGetValue() {
@@ -215,7 +212,7 @@ class DecodedTest {
 
         @Test
         fun testGetException() {
-            assertThat(value.exception?.message, `is`(message))
+            assertThat(value.exception, `is`(value.exception))
         }
 
         @Test
@@ -230,37 +227,37 @@ class DecodedTest {
 
         @Test
         fun testIfMissingKey() {
-            assertThat(value.ifMissingKey(2).exception?.message, `is`(message))
+            assertThat(value.ifMissingKey(2).exception, `is`(value.exception))
         }
 
         @Test
         fun testNullIfMissingKey() {
-            assertThat(value.nullIfMissingKey().exception?.message, `is`(message))
+            assertThat(value.nullIfMissingKey().exception, `is`(value.exception))
         }
 
         @Test
         fun testMap() {
-            assertThat(value.map { it.toString() }.exception?.message, `is`(message))
+            assertThat(value.map { it.toString() }.exception, `is`(value.exception))
         }
 
         @Test
         fun testFlatMap() {
-            assertThat(value.flatMap { pure(it.toString()) }.exception?.message, `is`(message))
+            assertThat(value.flatMap { pure(it.toString()) }.exception, `is`(value.exception))
         }
 
         @Test
         fun testApply() {
-            assertThat(value.apply(pure({ a: Int -> a.toString() })).exception?.message, `is`(message))
+            assertThat(value.apply(pure({ a: Int -> a.toString() })).exception, `is`(value.exception))
         }
 
         @Test
         fun testAp() {
-            assertThat((pure({ a: Int -> a.toString() }) ap value).exception?.message, `is`(message))
+            assertThat((pure({ a: Int -> a.toString() }) ap value).exception, `is`(value.exception))
         }
 
         @Test
         fun testMp() {
-            assertThat(({ it: Int -> it.toString() } mp value).exception?.message, `is`(message))
+            assertThat(({ it: Int -> it.toString() } mp value).exception, `is`(value.exception))
         }
     }
 
@@ -272,8 +269,8 @@ class DecodedTest {
         @Test
         fun testFlatten() {
             assertThat(successSuccess.flatten(), `is`(pure(1)))
-            assertThat(successFailure.flatten().exception?.message, `is`(message))
-            assertThat(failure.flatten().exception?.message, `is`(message))
+            assertThat(successFailure.flatten().exception, `is`(successFailure.value?.exception))
+            assertThat(failure.flatten().exception, `is`(failure.exception))
         }
     }
 }
