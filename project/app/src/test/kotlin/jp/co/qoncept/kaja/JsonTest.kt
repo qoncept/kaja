@@ -418,7 +418,7 @@ class JsonTest {
         jsonObject.value.put("boolean", true)
         val jsonNull = Json.Null
 
-        val decode: (Json) -> Decoded<Boolean> = { pure(false) }
+        val decode: (Json) -> Result<Boolean> = { pure(false) }
 
         assertThat(boolean.list(decode).exception, instanceOf(TypeMismatchException::class.java))
         assertThat(number.list(decode).exception, instanceOf(TypeMismatchException::class.java))
@@ -431,23 +431,23 @@ class JsonTest {
     class SequenceTest {
         @Test
         fun testArraySequence() {
-            val list0 = arrayListOf(Decoded.Success(true), Decoded.Success(false))
+            val list0 = arrayListOf(Result.Success(true), Result.Success(false))
             assertThat(sequence(list0).value!!.size, `is`(2))
             assertThat(sequence(list0).value!![0], `is`(true))
             assertThat(sequence(list0).value!![1], `is`(false))
 
-            val list1: ArrayList<Decoded<Boolean>> = arrayListOf(Decoded.Failure(TypeMismatchException(Json.Null, "failure")))
+            val list1: ArrayList<Result<Boolean>> = arrayListOf(Result.Failure(TypeMismatchException(Json.Null, "failure")))
             assertThat(sequence(list1).exception, instanceOf(TypeMismatchException::class.java))
         }
 
         @Test
         fun testMapSequence() {
-            val map0 = hashMapOf(Pair("true", Decoded.Success(true)), Pair("false", Decoded.Success(false)))
+            val map0 = hashMapOf(Pair("true", Result.Success(true)), Pair("false", Result.Success(false)))
             assertThat(sequence(map0).value!!.size, `is`(2))
             assertThat(sequence(map0).value!!["true"], `is`(true))
             assertThat(sequence(map0).value!!["false"], `is`(false))
 
-            val map1: HashMap<String, Decoded<Boolean>> = hashMapOf(Pair("failure", Decoded.Failure(TypeMismatchException(Json.Null, "failure"))))
+            val map1: HashMap<String, Result<Boolean>> = hashMapOf(Pair("failure", Result.Failure(TypeMismatchException(Json.Null, "failure"))))
             assertThat(sequence(map1).exception, instanceOf(TypeMismatchException::class.java))
         }
     }
