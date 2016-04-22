@@ -2,26 +2,26 @@ package jp.co.qoncept.kaja
 
 import java.util.*
 
-fun <T> sequence(xs: List<Decoded<T>>): Decoded<List<T>> {
+fun <T> sequence(xs: List<Result<T>>): Result<List<T>> {
     return pure(xs.fold(ArrayList<T>()) { accum, x ->
         when (x) {
-            is Decoded.Success -> {
+            is Result.Success -> {
                 accum.add(x.value!!)
                 accum
             }
-            else -> return Decoded.Failure(x.exception!!)
+            else -> return Result.Failure(x.exception!!)
         }
     })
 }
 
-fun <Key, Value> sequence(xs: Map<Key, Decoded<Value>>): Decoded<Map<Key, Value>> {
+fun <Key, Value> sequence(xs: Map<Key, Result<Value>>): Result<Map<Key, Value>> {
     return pure(xs.fold(HashMap<Key, Value>()) { accum, entry ->
         when (entry.value) {
-            is Decoded.Success -> {
+            is Result.Success -> {
                 accum.put(entry.key, entry.value.value!!)
                 accum
             }
-            else -> return Decoded.Failure(entry.value.exception!!)
+            else -> return Result.Failure(entry.value.exception!!)
         }
     })
 }

@@ -1,7 +1,7 @@
 package jp.co.qoncept.kaja
 
-sealed class Decoded<T> {
-    class Success<T>(value: T): Decoded<T>() {
+sealed class Result<T> {
+    class Success<T>(value: T): Result<T>() {
         private val _value: T = value
 
         override val value: T?
@@ -10,30 +10,30 @@ sealed class Decoded<T> {
         override val exception: DecodeException?
             get() = null
 
-        override fun <U> map(transform: (T) -> U): Decoded<U> {
+        override fun <U> map(transform: (T) -> U): Result<U> {
             return pure(transform(_value))
         }
 
-        override fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>{
+        override fun <U> flatMap(transform: (T) -> Result<U>): Result<U>{
             return transform(_value)
         }
 
-        override fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U> {
+        override fun <U> apply(transform: Result<(T) -> U>): Result<U> {
             return when(transform) {
                 is Success -> pure(transform._value(_value))
                 is Failure -> Failure(transform.exception!!)
             }
         }
 
-        override fun ifMissingKey(alternative: T): Decoded<T> {
+        override fun ifMissingKey(alternative: T): Result<T> {
             return this
         }
 
-        override fun nullIfMissingKey(): Decoded<T?> {
+        override fun nullIfMissingKey(): Result<T?> {
             return pure(_value)
         }
 
-        override fun or(alternative: Decoded<T>): Decoded<T> {
+        override fun or(alternative: Result<T>): Result<T> {
             return this
         }
 
@@ -42,7 +42,7 @@ sealed class Decoded<T> {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (other !is Decoded.Success<*>) return false
+            if (other !is Result.Success<*>) return false
 
             return _value == other._value
         }
@@ -52,7 +52,7 @@ sealed class Decoded<T> {
         }
     }
 
-    class Failure<T>(exception: DecodeException): Decoded<T>() {
+    class Failure<T>(exception: DecodeException): Result<T>() {
         private val _exception: DecodeException = exception
 
         override val value: T?
@@ -61,36 +61,36 @@ sealed class Decoded<T> {
         override val exception: DecodeException?
             get() = _exception
 
-        override fun <U> map(transform: (T) -> U): Decoded<U> {
+        override fun <U> map(transform: (T) -> U): Result<U> {
             return Failure(_exception)
         }
 
-        override fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U> {
+        override fun <U> flatMap(transform: (T) -> Result<U>): Result<U> {
             return Failure(_exception)
         }
 
-        override fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U> {
+        override fun <U> apply(transform: Result<(T) -> U>): Result<U> {
             return when(transform) {
                 is Success -> Failure(_exception)
                 is Failure -> Failure(transform._exception)
             }
         }
 
-        override fun ifMissingKey(alternative: T): Decoded<T> {
+        override fun ifMissingKey(alternative: T): Result<T> {
             return when(_exception) {
                 is MissingKeyException -> Success(alternative)
                 else -> this
             }
         }
 
-        override fun nullIfMissingKey(): Decoded<T?> {
+        override fun nullIfMissingKey(): Result<T?> {
             return when(_exception) {
                 is MissingKeyException -> Success(null)
                 else -> Failure(_exception)
             }
         }
 
-        override fun or(alternative: Decoded<T>): Decoded<T> {
+        override fun or(alternative: Result<T>): Result<T> {
             return alternative
         }
 
@@ -99,7 +99,7 @@ sealed class Decoded<T> {
         }
 
         override fun equals(other: Any?): Boolean {
-            if (other !is Decoded.Failure<*>) return false
+            if (other !is Result.Failure<*>) return false
 
             return _exception == other._exception
         }
@@ -114,56 +114,56 @@ sealed class Decoded<T> {
 
     abstract fun or(alternative: T): T
 
-    abstract fun or(alternative: Decoded<T>): Decoded<T>
+    abstract fun or(alternative: Result<T>): Result<T>
 
-    abstract fun ifMissingKey(alternative: T): Decoded<T>
+    abstract fun ifMissingKey(alternative: T): Result<T>
 
-    abstract fun nullIfMissingKey(): Decoded<T?>
+    abstract fun nullIfMissingKey(): Result<T?>
 
-    abstract fun <U> map(transform: (T) -> U): Decoded<U>
+    abstract fun <U> map(transform: (T) -> U): Result<U>
 
-    abstract fun <U> flatMap(transform: (T) -> Decoded<U>): Decoded<U>
+    abstract fun <U> flatMap(transform: (T) -> Result<U>): Result<U>
 
-    abstract fun <U> apply(transform: Decoded<(T) -> U>): Decoded<U>
+    abstract fun <U> apply(transform: Result<(T) -> U>): Result<U>
 }
 
-fun <T> Decoded<Decoded<T>>.flatten(): Decoded<T> {
+fun <T> Result<Result<T>>.flatten(): Result<T> {
     return this.flatMap { it }
 }
 
-infix fun <T, U> Decoded<(T) -> U>.ap(value: Decoded<T>): Decoded<U> {
+infix fun <T, U> Result<(T) -> U>.ap(value: Result<T>): Result<U> {
     return value.apply(this)
 }
 
-fun <T> pure(value: T): Decoded<T> {
-    return Decoded.Success(value)
+fun <T> pure(value: T): Result<T> {
+    return Result.Success(value)
 }
 
-operator fun Decoded<Json>.get(key: String): Decoded<Json> {
+operator fun Result<Json>.get(key: String): Result<Json> {
     return this.flatMap { it.get(key) }
 }
 
-val Decoded<Json>.boolean: Decoded<Boolean>
+val Result<Json>.boolean: Result<Boolean>
     get() = this.flatMap { it.boolean }
 
-val Decoded<Json>.int: Decoded<Int>
+val Result<Json>.int: Result<Int>
     get() = this.flatMap { it.int }
 
-val Decoded<Json>.long: Decoded<Long>
+val Result<Json>.long: Result<Long>
     get() = this.flatMap { it.long }
 
-val Decoded<Json>.double: Decoded<Double>
+val Result<Json>.double: Result<Double>
     get() = this.flatMap { it.double }
 
-val Decoded<Json>.string: Decoded<String>
+val Result<Json>.string: Result<String>
     get() = this.flatMap { it.string }
 
-val Decoded<Json>.list: Decoded<List<Json>>
+val Result<Json>.list: Result<List<Json>>
     get() = this.flatMap { it.list }
 
-val Decoded<Json>.map: Decoded<Map<String, Json>>
+val Result<Json>.map: Result<Map<String, Json>>
     get() = this.flatMap { it.map }
 
-infix fun <T, U> ((T) -> U).mp(value: Decoded<T>): Decoded<U> {
+infix fun <T, U> ((T) -> U).mp(value: Result<T>): Result<U> {
     return value.map(this)
 }
