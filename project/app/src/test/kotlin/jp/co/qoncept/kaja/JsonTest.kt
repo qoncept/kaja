@@ -3,11 +3,13 @@ package jp.co.qoncept.kaja
 import org.hamcrest.CoreMatchers.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.junit.AfterClass
 import org.junit.Assert.assertThat
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.experimental.runners.Enclosed
 import org.junit.runner.RunWith
+import java.io.File
 import java.util.*
 
 @RunWith(Enclosed::class)
@@ -161,11 +163,13 @@ class JsonTest {
     }
 
     class ArrayTest {
-        val value = Json.Array(JSONArray())
-        @Before
-        fun execBefore() {
-            value.value.put(true)
-            value.value.put(false)
+        companion object {
+            val value = Json.Array(JSONArray())
+            @BeforeClass @JvmStatic
+            fun execBeforeClass() {
+                value.value.put(true)
+                value.value.put(false)
+            }
         }
 
         @Test
@@ -212,16 +216,19 @@ class JsonTest {
     }
 
     class ObjectTest {
-        val value = Json.Object(JSONObject())
-        @Before
-        fun execBefore() {
-            value.value.put("boolean", true)
-            value.value.put("number", 0)
-            value.value.put("string", "string")
-            value.value.put("array", JSONArray())
-            value.value.put("jsonNull", JSONObject.NULL)
-            value.value.put("object", JSONObject())
+        companion object {
+            val value = Json.Object(JSONObject())
+            @BeforeClass @JvmStatic
+            fun execBeforeClass() {
+                value.value.put("boolean", true)
+                value.value.put("number", 0)
+                value.value.put("string", "string")
+                value.value.put("array", JSONArray())
+                value.value.put("jsonNull", JSONObject.NULL)
+                value.value.put("object", JSONObject())
+            }
         }
+
         @Test
         fun testBoolean() {
             assertThat(value.boolean.exception, instanceOf(TypeMismatchException::class.java))
@@ -359,13 +366,27 @@ class JsonTest {
     }
 
     class ParseTest {
-        val string = "{\"boolean\": true}"
+        companion object {
+            val string = """
+            |{"boolean": true}
+            """.trimMargin()
+            val file = File("parseTest.java")
+
+            @BeforeClass @JvmStatic
+            fun execBeforeClass() {
+                file.createNewFile()
+                file.appendText(string)
+            }
+
+            @AfterClass @JvmStatic
+            fun execAfterClass() {
+                file.delete()
+            }
+        }
+
         @Test
         fun testParseFromFile() {
-            /*
-            val file = File("")
             assertThat(Json.parse(file).get("boolean").boolean.value, `is`(true))
-            */
         }
 
         @Test
