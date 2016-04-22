@@ -7,7 +7,7 @@ sealed class Result<T> {
         override val value: T?
             get() = _value
 
-        override val exception: DecodeException?
+        override val exception: JsonException?
             get() = null
 
         override fun <U> map(transform: (T) -> U): Result<U> {
@@ -52,13 +52,13 @@ sealed class Result<T> {
         }
     }
 
-    class Failure<T>(exception: DecodeException): Result<T>() {
-        private val _exception: DecodeException = exception
+    class Failure<T>(exception: JsonException): Result<T>() {
+        private val _exception: JsonException = exception
 
         override val value: T?
             get() = null
 
-        override val exception: DecodeException?
+        override val exception: JsonException?
             get() = _exception
 
         override fun <U> map(transform: (T) -> U): Result<U> {
@@ -110,7 +110,7 @@ sealed class Result<T> {
     }
     abstract val value: T?
 
-    abstract val exception: DecodeException?
+    abstract val exception: JsonException?
 
     abstract fun or(alternative: T): T
 
