@@ -1,26 +1,21 @@
 package jp.co.qoncept.kaja
 
 sealed class Result<T> {
-    class Success<T>(value: T): Result<T>() {
-        private val _value: T = value
-
-        override val value: T?
-            get() = _value
-
+    class Success<T>(override val value: T): Result<T>() {
         override val exception: JsonException?
             get() = null
 
         override fun <U> map(transform: (T) -> U): Result<U> {
-            return pure(transform(_value))
+            return pure(transform(value))
         }
 
         override fun <U> flatMap(transform: (T) -> Result<U>): Result<U>{
-            return transform(_value)
+            return transform(value)
         }
 
         override fun <U> apply(transform: Result<(T) -> U>): Result<U> {
             return when(transform) {
-                is Success -> pure(transform._value(_value))
+                is Success -> pure(transform.value(value))
                 is Failure -> Failure(transform.exception!!)
             }
         }
@@ -30,7 +25,7 @@ sealed class Result<T> {
         }
 
         override fun nullIfMissingKey(): Result<T?> {
-            return pure(_value)
+            return pure(value)
         }
 
         override fun or(alternative: Result<T>): Result<T> {
@@ -38,17 +33,17 @@ sealed class Result<T> {
         }
 
         override fun or(alternative: T): T {
-            return _value
+            return value
         }
 
         override fun equals(other: Any?): Boolean {
             if (other !is Result.Success<*>) return false
 
-            return _value == other._value
+            return value == other.value
         }
 
         override fun hashCode(): Int {
-            return _value?.hashCode() ?: 0
+            return value?.hashCode() ?: 0
         }
     }
 
