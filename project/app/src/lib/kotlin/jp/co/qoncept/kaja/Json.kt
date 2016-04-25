@@ -22,7 +22,7 @@ abstract sealed class Json {
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         override val map: Result<Map<kotlin.String, Json>>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         }
     }
@@ -53,7 +53,7 @@ abstract sealed class Json {
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
         override val map: Result<Map<kotlin.String, Json>>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Number"))
         }
     }
@@ -73,7 +73,7 @@ abstract sealed class Json {
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
         override val map: Result<Map<kotlin.String, Json>>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             return Result.Failure(TypeMismatchException(this, "kotlin.String"))
         }
     }
@@ -107,7 +107,7 @@ abstract sealed class Json {
             }
         override val map: Result<Map<kotlin.String, Json>>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             return Result.Failure(TypeMismatchException(this, "Array"))
         }
 
@@ -151,7 +151,7 @@ abstract sealed class Json {
                 }
                 return pure(result)
             }
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             val element = value.opt(key)
             return when (element) {
                 is kotlin.Boolean -> pure(Json.Boolean(element))
@@ -180,7 +180,7 @@ abstract sealed class Json {
             get() = Result.Failure(TypeMismatchException(this, "Null"))
         override val map: Result<Map<kotlin.String, Json>>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json> {
             return Result.Failure(TypeMismatchException(this, "Null"))
         }
     }
@@ -261,7 +261,7 @@ abstract sealed class Json {
 
     abstract val map: Result<Map<kotlin.String, Json>>
 
-    abstract fun get(key: kotlin.String): Result<Json>
+    abstract operator fun get(key: kotlin.String): Result<Json>
 
     fun <T> list(decode: (Json) -> Result<T>): Result<List<T>> {
         when (list) {

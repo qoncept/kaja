@@ -54,7 +54,7 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(value.get("boolean").exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(value["boolean"].exception, instanceOf(TypeMismatchException::class.java))
         }
     }
 
@@ -113,9 +113,9 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(intValue.get("int").exception, instanceOf(TypeMismatchException::class.java))
-            assertThat(longValue.get("long").exception, instanceOf(TypeMismatchException::class.java))
-            assertThat(doubleValue.get("double").exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(intValue["int"].exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(longValue["long"].exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(doubleValue["double"].exception, instanceOf(TypeMismatchException::class.java))
         }
     }
 
@@ -158,7 +158,7 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(value.get("string").exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(value["string"].exception, instanceOf(TypeMismatchException::class.java))
         }
     }
 
@@ -211,7 +211,7 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(value.get("array").exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(value["array"].exception, instanceOf(TypeMismatchException::class.java))
         }
     }
 
@@ -273,13 +273,13 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(value.get("boolean").value!!.boolean.value, `is`(true))
-            assertThat(value.get("number").value!!.int.value, `is`(0))
-            assertThat(value.get("string").value!!.string.value, `is`("string"))
-            assertThat(value.get("array").value!!.list.value, instanceOf(List::class.java))
-            assertThat(value.get("jsonNull").value, `is`(Json.Null as Json))
-            assertThat(value.get("object").value!!.map.value, instanceOf(Map::class.java))
-            assertThat(value.get("null").exception, instanceOf(MissingKeyException::class.java))
+            assertThat(value["boolean"].value!!.boolean.value, `is`(true))
+            assertThat(value["number"].value!!.int.value, `is`(0))
+            assertThat(value["string"].value!!.string.value, `is`("string"))
+            assertThat(value["array"].value!!.list.value, instanceOf(List::class.java))
+            assertThat(value["jsonNull"].value, `is`(Json.Null as Json))
+            assertThat(value["object"].value!!.map.value, instanceOf(Map::class.java))
+            assertThat(value["null"].exception, instanceOf(MissingKeyException::class.java))
         }
     }
 
@@ -322,7 +322,7 @@ class JsonTest {
 
         @Test
         fun testGet() {
-            assertThat(value.get("jsonNull").exception, instanceOf(TypeMismatchException::class.java))
+            assertThat(value["jsonNull"].exception, instanceOf(TypeMismatchException::class.java))
         }
     }
 
@@ -386,24 +386,24 @@ class JsonTest {
 
         @Test
         fun testParseFromFile() {
-            assertThat(Json.parse(file).get("boolean").boolean.value, `is`(true))
+            assertThat(Json.parse(file)["boolean"].boolean.value, `is`(true))
         }
 
         @Test
         fun testParseFromInputStream() {
             val inputStream = string.byteInputStream()
-            assertThat(Json.parse(inputStream).get("boolean").boolean.value, `is`(true))
+            assertThat(Json.parse(inputStream)["boolean"].boolean.value, `is`(true))
         }
 
         @Test
         fun testParseFromByteArray() {
             val byteArray = string.toByteArray()
-            assertThat(Json.parse(byteArray).get("boolean").boolean.value, `is`(true))
+            assertThat(Json.parse(byteArray)["boolean"].boolean.value, `is`(true))
         }
 
         @Test
         fun testParseFromString() {
-            assertThat(Json.parse(string).get("boolean").boolean.value, `is`(true))
+            assertThat(Json.parse(string)["boolean"].boolean.value, `is`(true))
         }
     }
 
