@@ -370,6 +370,9 @@ class JsonTest {
             val string = """
             |{"boolean": true}
             """.trimMargin()
+            val arrayString = """
+            |[1, 2, 3]
+            """.trimMargin()
             val file = File("parseTest.java")
 
             @BeforeClass @JvmStatic
@@ -403,7 +406,12 @@ class JsonTest {
 
         @Test
         fun testParseFromString() {
-            assertThat(Json.parse(string)["boolean"].boolean.value, `is`(true))
+            run {
+                assertThat(Json.parse(string)["boolean"].boolean.value, `is`(true))
+            }
+            run {
+                assertThat(Json.parse(arrayString).flatMap { it.list { it.int } }.value, `is`(listOf(1, 2, 3)))
+            }
         }
     }
 
