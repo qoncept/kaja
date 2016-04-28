@@ -226,7 +226,12 @@ abstract sealed class Json {
             return try {
                 pure(Json.Object(JSONObject(string)))
             } catch (e: JSONException) {
-                Result.Failure(ParseException(e))
+                try {
+                    pure(Json.Array(JSONArray(string)))
+                }
+                catch (e2: JSONException) {
+                    Result.Failure(ParseException(e))
+                }
             }
         }
 
