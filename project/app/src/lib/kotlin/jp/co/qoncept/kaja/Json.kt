@@ -241,7 +241,7 @@ abstract sealed class Json {
 
         fun parse(inputStream: InputStream): Result<Json> {
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-            val string = bufferedReader.readLines().fold("") { a, b -> a + b }
+            val string = bufferedReader.lineSequence().joinToString(" ")
             bufferedReader.close()
 
             return parse(string)
