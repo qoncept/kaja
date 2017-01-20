@@ -8,6 +8,29 @@ import java.util.*
 import jp.co.qoncept.util.Result
 
 abstract sealed class Json {
+    abstract val boolean: Result<kotlin.Boolean, JsonException>
+
+    abstract val int: Result<Int, JsonException>
+
+    abstract val long: Result<Long, JsonException>
+
+    abstract val double: Result<Double, JsonException>
+
+    abstract val string: Result<kotlin.String, JsonException>
+
+    abstract val list: Result<List<Json>, JsonException>
+
+    abstract val map: Result<Map<kotlin.String, Json>, JsonException>
+
+    abstract operator fun get(key: kotlin.String): Result<Json, JsonException>
+
+    fun <T> list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
+        when (list) {
+            is Result.Success -> return sequence(list.value!!.map(decode))
+            else -> return Result.Failure(TypeMismatchException(this, Json.javaClass.name))
+        }
+    }
+
     class Boolean(val value: kotlin.Boolean) : Json() {
         override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Success(value)
@@ -250,29 +273,6 @@ abstract sealed class Json {
 
         fun parse(file: File): Result<Json, JsonException> {
             return parse(FileInputStream(file))
-        }
-    }
-
-    abstract val boolean: Result<kotlin.Boolean, JsonException>
-
-    abstract val int: Result<Int, JsonException>
-
-    abstract val long: Result<Long, JsonException>
-
-    abstract val double: Result<Double, JsonException>
-
-    abstract val string: Result<kotlin.String, JsonException>
-
-    abstract val list: Result<List<Json>, JsonException>
-
-    abstract val map: Result<Map<kotlin.String, Json>, JsonException>
-
-    abstract operator fun get(key: kotlin.String): Result<Json, JsonException>
-
-    fun <T> list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
-        when (list) {
-            is Result.Success -> return sequence(list.value!!.map(decode))
-            else -> return Result.Failure(TypeMismatchException(this, Json.javaClass.name))
         }
     }
 }
