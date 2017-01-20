@@ -7,7 +7,7 @@ import java.io.*
 import java.util.*
 import jp.co.qoncept.util.Result
 
-abstract sealed class Json {
+sealed class Json {
     abstract val boolean: Result<kotlin.Boolean, JsonException>
 
     abstract val int: Result<Int, JsonException>
