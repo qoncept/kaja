@@ -25,8 +25,9 @@ sealed class Json {
     abstract operator fun get(key: kotlin.String): Result<Json, JsonException>
 
     fun <T> list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
+        val list = this.list
         when (list) {
-            is Result.Success -> return sequence(list.value!!.map(decode))
+            is Result.Success -> return sequence(list.value.map(decode))
             else -> return Result.Failure(TypeMismatchException(this, Json::class.java.name))
         }
     }
