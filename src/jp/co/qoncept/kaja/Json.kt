@@ -27,7 +27,7 @@ sealed class Json {
     fun <T> list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
         when (list) {
             is Result.Success -> return sequence(list.value!!.map(decode))
-            else -> return Result.Failure(TypeMismatchException(this, Json.javaClass.name))
+            else -> return Result.Failure(TypeMismatchException(this, Json::class.java.name))
         }
     }
 
