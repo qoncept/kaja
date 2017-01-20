@@ -32,6 +32,14 @@ sealed class Json {
         }
     }
 
+    fun <T> map(decode: (Json) -> Result<T, JsonException>): Result<Map<kotlin.String, T>, JsonException> {
+        val map = this.map
+        when (map) {
+            is Result.Success -> return sequence(map.value.mapValues{ decode(it.value) })
+            else -> return Result.Failure(TypeMismatchException(this, Json::class.java.name))
+        }
+    }
+
     class Boolean(val value: kotlin.Boolean) : Json() {
         override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Success(value)
