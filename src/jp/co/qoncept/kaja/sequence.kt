@@ -1,9 +1,10 @@
 package jp.co.qoncept.kaja
 
 import java.util.*
+import jp.co.qoncept.util.Result
 
-fun <T> sequence(xs: List<Result<T>>): Result<List<T>> {
-    return pure(xs.fold(ArrayList<T>()) { accum, x ->
+fun <T> sequence(xs: List<Result<T, JsonException>>): Result<List<T>, JsonException> {
+    return Result.Success(xs.fold(ArrayList<T>()) { accum, x ->
         when (x) {
             is Result.Success -> {
                 accum.add(x.value!!)
@@ -14,8 +15,8 @@ fun <T> sequence(xs: List<Result<T>>): Result<List<T>> {
     })
 }
 
-fun <Key, Value> sequence(xs: Map<Key, Result<Value>>): Result<Map<Key, Value>> {
-    return pure(xs.fold(HashMap<Key, Value>()) { accum, entry ->
+fun <Key, Value> sequence(xs: Map<Key, Result<Value, JsonException>>): Result<Map<Key, Value>, JsonException> {
+    return Result.Success(xs.fold(HashMap<Key, Value>()) { accum, entry ->
         when (entry.value) {
             is Result.Success -> {
                 accum.put(entry.key, entry.value.value!!)

@@ -5,91 +5,92 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.*
 import java.util.*
+import jp.co.qoncept.util.Result
 
 abstract sealed class Json {
     class Boolean(val value: kotlin.Boolean) : Json() {
-        override val boolean: Result<kotlin.Boolean>
-            get() = pure(value)
-        override val int: Result<Int>
+        override val boolean: Result<kotlin.Boolean, JsonException>
+            get() = Result.Success(value)
+        override val int: Result<Int, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override val string: Result<kotlin.String>
+        override val string: Result<kotlin.String, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override val list: Result<List<Json>>
+        override val list: Result<List<Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         }
     }
 
     class Number(val value: kotlin.Number) : Json() {
-        override val boolean: Result<kotlin.Boolean>
+        override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
-        override val int: Result<Int>
+        override val int: Result<Int, JsonException>
             get() = if (value is Int) {
-                pure(value)
+                Result.Success(value)
             } else {
                 Result.Failure(TypeMismatchException(this, "Int"))
             }
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = if (value is Long) {
-                pure(value)
+                Result.Success(value)
             } else {
                 Result.Failure(TypeMismatchException(this, "Long"))
             }
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = when (value) {
-                is Int, is Long, is Double -> pure(value.toDouble())
+                is Int, is Long, is Double -> Result.Success(value.toDouble())
                 else -> Result.Failure(TypeMismatchException(this, "kotlin.Number"))
             }
-        override val string: Result<kotlin.String>
+        override val string: Result<kotlin.String, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
-        override val list: Result<List<Json>>
+        override val list: Result<List<Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.Number"))
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Number"))
         }
     }
 
     class String(val value: kotlin.String) : Json() {
-        override val boolean: Result<kotlin.Boolean>
+        override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override val int: Result<Int>
+        override val int: Result<Int, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override val string: Result<kotlin.String>
-            get() = pure(value)
-        override val list: Result<List<Json>>
+        override val string: Result<kotlin.String, JsonException>
+            get() = Result.Success(value)
+        override val list: Result<List<Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "kotlin.String"))
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.String"))
         }
     }
 
     class Array(val value: JSONArray) : Json() {
-        override val boolean: Result<kotlin.Boolean>
+        override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override val int: Result<Int>
+        override val int: Result<Int, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override val string: Result<kotlin.String>
+        override val string: Result<kotlin.String, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override val list: Result<List<Json>>
+        override val list: Result<List<Json>, JsonException>
             get() {
                 val list = ArrayList<Json>()
                 for (i in 0..value.length()-1) {
@@ -103,11 +104,11 @@ abstract sealed class Json {
                         else -> Json.Object(element as JSONObject)
                     })
                 }
-                return pure(list)
+                return Result.Success(list)
             }
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Array"))
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "Array"))
         }
 
@@ -122,19 +123,19 @@ abstract sealed class Json {
     }
 
     class Object(val value: JSONObject) : Json() {
-        override val boolean: Result<kotlin.Boolean>
+        override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val int: Result<Int>
+        override val int: Result<Int, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val string: Result<kotlin.String>
+        override val string: Result<kotlin.String, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val list: Result<List<Json>>
+        override val list: Result<List<Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Object"))
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() {
                 val result = HashMap<kotlin.String, Json>()
                 for (key in value.keys()) {
@@ -149,38 +150,38 @@ abstract sealed class Json {
                         else -> Json.Object(element as JSONObject)
                     })
                 }
-                return pure(result)
+                return Result.Success(result)
             }
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             val element = value.opt(key)
             return when (element) {
-                is kotlin.Boolean -> pure(Json.Boolean(element))
-                is kotlin.Number -> pure(Json.Number(element))
-                is kotlin.String -> pure(Json.String(element))
-                is JSONArray -> pure(Json.Array(element))
-                JSONObject.NULL -> pure(Json.Null)
-                is JSONObject -> pure(Json.Object(element))
+                is kotlin.Boolean -> Result.Success(Json.Boolean(element))
+                is kotlin.Number -> Result.Success(Json.Number(element))
+                is kotlin.String -> Result.Success(Json.String(element))
+                is JSONArray -> Result.Success(Json.Array(element))
+                JSONObject.NULL -> Result.Success(Json.Null)
+                is JSONObject -> Result.Success(Json.Object(element))
                 else -> Result.Failure(MissingKeyException(this, key))
             }
         }
     }
 
     object Null : Json() {
-        override val boolean: Result<kotlin.Boolean>
+        override val boolean: Result<kotlin.Boolean, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val int: Result<Int>
+        override val int: Result<Int, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val long: Result<Long>
+        override val long: Result<Long, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val double: Result<Double>
+        override val double: Result<Double, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val string: Result<kotlin.String>
+        override val string: Result<kotlin.String, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val list: Result<List<Json>>
+        override val list: Result<List<Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override val map: Result<Map<kotlin.String, Json>>
+        override val map: Result<Map<kotlin.String, Json>, JsonException>
             get() = Result.Failure(TypeMismatchException(this, "Null"))
-        override operator fun get(key: kotlin.String): Result<Json> {
+        override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "Null"))
         }
     }
@@ -222,12 +223,12 @@ abstract sealed class Json {
             return Json.Object(jsonObject)
         }
 
-        fun parse(string: kotlin.String): Result<Json> {
+        fun parse(string: kotlin.String): Result<Json, JsonException> {
             return try {
-                pure(Json.Object(JSONObject(string)))
+                Result.Success(Json.Object(JSONObject(string)))
             } catch (e: JSONException) {
                 try {
-                    pure(Json.Array(JSONArray(string)))
+                    Result.Success(Json.Array(JSONArray(string)))
                 }
                 catch (e2: JSONException) {
                     Result.Failure(ParseException(e))
@@ -235,11 +236,11 @@ abstract sealed class Json {
             }
         }
 
-        fun parse(byteArray: ByteArray): Result<Json> {
+        fun parse(byteArray: ByteArray): Result<Json, JsonException> {
             return parse(String(byteArray))
         }
 
-        fun parse(inputStream: InputStream): Result<Json> {
+        fun parse(inputStream: InputStream): Result<Json, JsonException> {
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
             val string = bufferedReader.lineSequence().joinToString("")
             bufferedReader.close()
@@ -247,28 +248,28 @@ abstract sealed class Json {
             return parse(string)
         }
 
-        fun parse(file: File): Result<Json> {
+        fun parse(file: File): Result<Json, JsonException> {
             return parse(FileInputStream(file))
         }
     }
 
-    abstract val boolean: Result<kotlin.Boolean>
+    abstract val boolean: Result<kotlin.Boolean, JsonException>
 
-    abstract val int: Result<Int>
+    abstract val int: Result<Int, JsonException>
 
-    abstract val long: Result<Long>
+    abstract val long: Result<Long, JsonException>
 
-    abstract val double: Result<Double>
+    abstract val double: Result<Double, JsonException>
 
-    abstract val string: Result<kotlin.String>
+    abstract val string: Result<kotlin.String, JsonException>
 
-    abstract val list: Result<List<Json>>
+    abstract val list: Result<List<Json>, JsonException>
 
-    abstract val map: Result<Map<kotlin.String, Json>>
+    abstract val map: Result<Map<kotlin.String, Json>, JsonException>
 
-    abstract operator fun get(key: kotlin.String): Result<Json>
+    abstract operator fun get(key: kotlin.String): Result<Json, JsonException>
 
-    fun <T> list(decode: (Json) -> Result<T>): Result<List<T>> {
+    fun <T> list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
         when (list) {
             is Result.Success -> return sequence(list.value!!.map(decode))
             else -> return Result.Failure(TypeMismatchException(this, Json.javaClass.name))

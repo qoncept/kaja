@@ -1,5 +1,7 @@
 package jp.co.qoncept.kaja
 
+import jp.co.qoncept.util.Result
+import jp.co.qoncept.util.flatMap
 import org.json.JSONArray
 import org.json.JSONObject
 import org.testng.Assert.*
@@ -422,7 +424,7 @@ class JsonTest {
         jsonObject.value.put("boolean", true)
         val jsonNull = Json.Null
 
-        val decode: (Json) -> Result<Boolean> = { pure(false) }
+        val decode: (Json) -> Result<Boolean, JsonException> = { Result.Success(false) }
 
         assertTrue(boolean.list(decode).exception is TypeMismatchException)
         assertTrue(number.list(decode).exception is TypeMismatchException)
@@ -435,23 +437,23 @@ class JsonTest {
     class SequenceTest {
         @Test
         fun testArraySequence() {
-            val list0 = arrayListOf(Result.Success(true), Result.Success(false))
+            val list0 = arrayListOf<Result<Boolean, JsonException>>(Result.Success(true), Result.Success(false))
             assertEquals(sequence(list0).value!!.size, 2)
             assertEquals(sequence(list0).value!![0], true)
             assertEquals(sequence(list0).value!![1], false)
 
-            val list1: ArrayList<Result<Boolean>> = arrayListOf(Result.Failure(TypeMismatchException(Json.Null, "failure")))
+            val list1: ArrayList<Result<Boolean, JsonException>> = arrayListOf(Result.Failure(TypeMismatchException(Json.Null, "failure")))
             assertTrue(sequence(list1).exception is TypeMismatchException)
         }
 
         @Test
         fun testMapSequence() {
-            val map0 = hashMapOf(Pair("true", Result.Success(true)), Pair("false", Result.Success(false)))
+            val map0 = hashMapOf<String, Result<Boolean, JsonException>>("true" to Result.Success(true), "false" to Result.Success(false))
             assertEquals(sequence(map0).value!!.size, 2)
             assertEquals(sequence(map0).value!!["true"], true)
             assertEquals(sequence(map0).value!!["false"], false)
 
-            val map1: HashMap<String, Result<Boolean>> = hashMapOf(Pair("failure", Result.Failure(TypeMismatchException(Json.Null, "failure"))))
+            val map1: HashMap<String, Result<Boolean, JsonException>> = hashMapOf(Pair("failure", Result.Failure(TypeMismatchException(Json.Null, "failure"))))
             assertTrue(sequence(map1).exception is TypeMismatchException)
         }
     }
