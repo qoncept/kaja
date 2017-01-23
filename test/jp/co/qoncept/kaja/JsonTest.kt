@@ -1,9 +1,9 @@
 package jp.co.qoncept.kaja
 
-import jp.co.qoncept.util.Result
-import jp.co.qoncept.util.ap
-import jp.co.qoncept.util.flatMap
-import jp.co.qoncept.util.mp
+import jp.co.qoncept.kotres.Result
+import jp.co.qoncept.kotres.ap
+import jp.co.qoncept.kotres.flatMap
+import jp.co.qoncept.kotres.mp
 import org.testng.Assert.*
 import org.testng.annotations.AfterClass
 import org.testng.annotations.BeforeClass

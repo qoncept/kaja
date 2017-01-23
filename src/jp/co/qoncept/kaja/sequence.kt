@@ -1,7 +1,7 @@
 package jp.co.qoncept.kaja
 
 import java.util.*
-import jp.co.qoncept.util.Result
+import jp.co.qoncept.kotres.Result
 
 fun <T> sequence(xs: List<Result<T, JsonException>>): Result<List<T>, JsonException> {
     return Result.Success(xs.fold(ArrayList<T>()) { accum, x ->

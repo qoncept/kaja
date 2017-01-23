@@ -1,7 +1,7 @@
 package jp.co.qoncept.kaja
 
-import jp.co.qoncept.util.Result
-import jp.co.qoncept.util.flatMap
+import jp.co.qoncept.kotres.Result
+import jp.co.qoncept.kotres.flatMap
 
 operator fun Result<Json, JsonException>.get(key: String): Result<Json, JsonException> {
     return flatMap { it[key] }

@@ -5,7 +5,7 @@ import org.json.JSONException
 import org.json.JSONObject
 import java.io.*
 import java.util.*
-import jp.co.qoncept.util.Result
+import jp.co.qoncept.kotres.Result
 
 sealed class Json {
     abstract val boolean: Result<kotlin.Boolean, JsonException>
@@ -228,6 +228,7 @@ sealed class Json {
                     Result.Success(createJson(JSONArray(string)))
                 }
                 catch (e2: JSONException) {
+                    println(string)
                     Result.Failure(ParseException(e))
                 }
             }
