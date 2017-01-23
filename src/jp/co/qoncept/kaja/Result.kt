@@ -27,3 +27,23 @@ val Result<Json, JsonException>.list: Result<List<Json>, JsonException>
 
 val Result<Json, JsonException>.map: Result<Map<String, Json>, JsonException>
     get() = flatMap { it.map }
+
+fun <T> Result<T, JsonException>.ifMissingKey(alternative: T): Result<T, JsonException> {
+    return when (this) {
+        is Result.Success -> this
+        is Result.Failure -> when (exception) {
+            is MissingKeyException -> Result.Success(alternative)
+            else -> this
+        }
+    }
+}
+
+fun <T> Result<T, JsonException>.nullIfMissingKey(): Result<T?, JsonException> {
+    return when (this) {
+        is Result.Success -> Result.Success(value)
+        is Result.Failure -> when (exception) {
+            is MissingKeyException -> Result.Success(null)
+            else -> Result.Failure(exception)
+        }
+    }
+}
