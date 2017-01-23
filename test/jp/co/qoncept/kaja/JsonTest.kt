@@ -1,7 +1,9 @@
 package jp.co.qoncept.kaja
 
 import jp.co.qoncept.util.Result
+import jp.co.qoncept.util.ap
 import jp.co.qoncept.util.flatMap
+import jp.co.qoncept.util.mp
 import org.testng.Assert.*
 import org.testng.annotations.AfterClass
 import org.testng.annotations.BeforeClass
@@ -9,6 +11,42 @@ import org.testng.annotations.Test
 import java.io.File
 
 class JsonTest {
+    class ExampleTest {
+        @Test
+        fun testExample() {
+            data class Person(
+                    val firstName: String,
+                    val lastName: String,
+                    val age: Int
+            )
+
+            val jsonString = """
+            | {
+            |   "firstName": "Albert",
+            |   "lastName": "Einstein",
+            |   "age": 28
+            | }
+            """
+
+            val json: Result<Json, JsonException>
+                    = Json.parse(jsonString)
+
+            val person: Result<Person, JsonException>
+                    = curry(::Person) mp
+                        json["firstName"].string ap
+                        json["lastName"] .string ap
+                        json["age"].int
+
+            /**/ assertEquals(person.value!!.firstName, "Albert")
+            /**/ assertEquals(person.value!!.lastName, "Einstein")
+            /**/ assertEquals(person.value!!.age, 28)
+        }
+
+        fun <A, B, C, D> curry(function: (A, B, C) -> D): (A) -> (B) -> (C) -> D {
+            return { a -> { b -> { c -> function(a, b, c) } } }
+        }
+    }
+
     class BooleanTest {
         val value = Json.Boolean(true)
 
