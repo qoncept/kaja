@@ -2,14 +2,11 @@ package jp.co.qoncept.kaja
 
 import jp.co.qoncept.util.Result
 import jp.co.qoncept.util.flatMap
-import org.json.JSONArray
-import org.json.JSONObject
 import org.testng.Assert.*
 import org.testng.annotations.AfterClass
 import org.testng.annotations.BeforeClass
 import org.testng.annotations.Test
 import java.io.File
-import java.util.*
 
 class JsonTest {
     class BooleanTest {
@@ -162,12 +159,7 @@ class JsonTest {
 
     class ArrayTest {
         companion object {
-            val value = Json.Array(JSONArray())
-            @BeforeClass @JvmStatic
-            fun execBeforeClass() {
-                value.value.put(true)
-                value.value.put(false)
-            }
+            val value = Json.Array(listOf(Json.Boolean(true), Json.Boolean(false)))
         }
 
         @Test
@@ -215,16 +207,14 @@ class JsonTest {
 
     class ObjectTest {
         companion object {
-            val value = Json.Object(JSONObject())
-            @BeforeClass @JvmStatic
-            fun execBeforeClass() {
-                value.value.put("boolean", true)
-                value.value.put("number", 0)
-                value.value.put("string", "string")
-                value.value.put("array", JSONArray())
-                value.value.put("jsonNull", JSONObject.NULL)
-                value.value.put("object", JSONObject())
-            }
+            val value = Json.Object(mapOf(
+                    "boolean" to Json.Boolean(true),
+                    "number" to Json.Number(0),
+                    "string" to Json.String("string"),
+                    "array" to Json.Array(listOf()),
+                    "jsonNull" to Json.Null,
+                    "object" to Json.Object(mapOf())
+            ))
         }
 
         @Test
@@ -352,7 +342,7 @@ class JsonTest {
 
         @Test
         fun testOfList() {
-            val value = arrayListOf(Json.Boolean(true))
+            val value = listOf(Json.Boolean(true))
             assertEquals(Json.of(value).list.value!![0].boolean.value, true)
         }
 
@@ -418,10 +408,8 @@ class JsonTest {
         val boolean = Json.Boolean(true)
         val number = Json.Number(1)
         val string = Json.String("string")
-        val jsonArray = Json.Array(JSONArray())
-        jsonArray.value.put(true)
-        val jsonObject = Json.Object(JSONObject())
-        jsonObject.value.put("boolean", true)
+        val jsonArray = Json.Array(listOf(Json.Boolean(true)))
+        val jsonObject = Json.Object(mapOf("boolean" to Json.Boolean(true)))
         val jsonNull = Json.Null
 
         val decode: (Json) -> Result<Boolean, JsonException> = { Result.Success(false) }
@@ -437,12 +425,12 @@ class JsonTest {
     class SequenceTest {
         @Test
         fun testArraySequence() {
-            val list0 = arrayListOf<Result<Boolean, JsonException>>(Result.Success(true), Result.Success(false))
+            val list0 = listOf<Result<Boolean, JsonException>>(Result.Success(true), Result.Success(false))
             assertEquals(sequence(list0).value!!.size, 2)
             assertEquals(sequence(list0).value!![0], true)
             assertEquals(sequence(list0).value!![1], false)
 
-            val list1: ArrayList<Result<Boolean, JsonException>> = arrayListOf(Result.Failure(TypeMismatchException(Json.Null, "failure")))
+            val list1 = listOf<Result<Boolean, JsonException>>(Result.Failure(TypeMismatchException(Json.Null, "failure")))
             assertTrue(sequence(list1).exception is TypeMismatchException)
         }
 
@@ -453,7 +441,7 @@ class JsonTest {
             assertEquals(sequence(map0).value!!["true"], true)
             assertEquals(sequence(map0).value!!["false"], false)
 
-            val map1: HashMap<String, Result<Boolean, JsonException>> = hashMapOf(Pair("failure", Result.Failure(TypeMismatchException(Json.Null, "failure"))))
+            val map1 = mapOf<String, Result<Boolean, JsonException>>(Pair("failure", Result.Failure(TypeMismatchException(Json.Null, "failure"))))
             assertTrue(sequence(map1).exception is TypeMismatchException)
         }
     }
