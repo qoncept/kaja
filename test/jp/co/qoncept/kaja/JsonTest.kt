@@ -20,13 +20,11 @@ class JsonTest {
                     val age: Int
             )
 
-            val jsonString = """
-            | {
-            |   "firstName": "Albert",
-            |   "lastName": "Einstein",
-            |   "age": 28
-            | }
-            """
+            val jsonString = """{
+                |  "firstName": "Albert",
+                |  "lastName": "Einstein",
+                |  "age": 28
+                |}""".trimMargin()
 
             val json: Result<Json, JsonException>
                     = Json.parse(jsonString)
