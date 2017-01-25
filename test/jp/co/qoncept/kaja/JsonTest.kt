@@ -391,18 +391,17 @@ class JsonTest {
 
     class ParseTest {
         companion object {
-            val string = """
-            |{"boolean": true}
-            """.trimMargin()
-            val arrayString = """
-            |[1, 2, 3]
-            """.trimMargin()
-            val file = File("parseTest.java")
+            val jsonObjectString = """{
+                |  "boolean": true,
+                |  "array": [2, 3, 5]
+                |}""".trimMargin()
+            val jsonArrayString = """[2, {"b": 3, "c": 5}]"""
+            val file = File("ParseTest.java")
 
             @BeforeClass @JvmStatic
             fun execBeforeClass() {
                 file.createNewFile()
-                file.appendText(string)
+                file.appendText(jsonObjectString)
             }
 
             @AfterClass @JvmStatic
@@ -413,28 +412,41 @@ class JsonTest {
 
         @Test
         fun testParseFromFile() {
-            assertEquals(Json.parse(file)["boolean"].boolean.value, true)
+            val json = Json.parse(file)
+
+            assertEquals(json["boolean"].boolean.value, true)
+            assertEquals(json["array"].list { it.int }.value, listOf(2, 3, 5))
         }
 
         @Test
         fun testParseFromInputStream() {
-            val inputStream = string.byteInputStream()
-            assertEquals(Json.parse(inputStream)["boolean"].boolean.value, true)
+            val json = Json.parse(jsonObjectString.byteInputStream())
+
+            assertEquals(json["boolean"].boolean.value, true)
+            assertEquals(json["array"].list { it.int }.value, listOf(2, 3, 5))
         }
 
         @Test
         fun testParseFromByteArray() {
-            val byteArray = string.toByteArray()
-            assertEquals(Json.parse(byteArray)["boolean"].boolean.value, true)
+            val json = Json.parse(jsonObjectString.toByteArray())
+
+            assertEquals(json["boolean"].boolean.value, true)
+            assertEquals(json["array"].list { it.int }.value, listOf(2, 3, 5))
         }
 
         @Test
         fun testParseFromString() {
             run {
-                assertEquals(Json.parse(string)["boolean"].boolean.value, true)
+                val json = Json.parse(jsonObjectString)
+
+                assertEquals(json["boolean"].boolean.value, true)
+                assertEquals(json["array"].list { it.int }.value, listOf(2, 3, 5))
             }
             run {
-                assertEquals(Json.parse(arrayString).flatMap { it.list { it.int } }.value, listOf(1, 2, 3))
+                val json = Json.parse(jsonArrayString)
+
+                assertEquals(json[0].int.value, 2)
+                assertEquals(json[1].map { it.int }.value, mapOf("b" to 3, "c" to 5))
             }
         }
     }

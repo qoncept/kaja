@@ -3,6 +3,10 @@ package jp.co.qoncept.kaja
 import jp.co.qoncept.kotres.Result
 import jp.co.qoncept.kotres.flatMap
 
+operator fun Result<Json, JsonException>.get(index: Int): Result<Json, JsonException> {
+    return flatMap { it[index] }
+}
+
 operator fun Result<Json, JsonException>.get(key: String): Result<Json, JsonException> {
     return flatMap { it[key] }
 }
@@ -27,6 +31,14 @@ val Result<Json, JsonException>.list: Result<List<Json>, JsonException>
 
 val Result<Json, JsonException>.map: Result<Map<String, Json>, JsonException>
     get() = flatMap { it.map }
+
+fun <T> Result<Json, JsonException>.list(decode: (Json) -> Result<T, JsonException>): Result<List<T>, JsonException> {
+    return flatMap { it.list(decode) }
+}
+
+fun <T> Result<Json, JsonException>.map(decode: (Json) -> Result<T, JsonException>): Result<Map<kotlin.String, T>, JsonException> {
+    return flatMap { it.map(decode) }
+}
 
 fun <T> Result<T, JsonException>.ifMissingKey(alternative: T): Result<T, JsonException> {
     return when (this) {

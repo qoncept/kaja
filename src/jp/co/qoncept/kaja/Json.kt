@@ -254,15 +254,19 @@ sealed class Json {
 
 private fun createJson(value: JSONObject): Json {
     if (value == JSONObject.NULL) { return Json.Null }
-    return Json.Object(value.toMap().mapValues { createJson(it.value) })
+    val entries = value.keySet().map { key -> key to createJson(value.get(key)) }.toTypedArray()
+    val map = mapOf(*entries)
+    return Json.Object(map)
 }
 
 private fun createJson(value: JSONArray): Json {
-    return Json.Array(value.toList().map(::createJson))
+    val list = (0 until value.length()).map { index -> createJson(value.get(index)) }
+    return Json.Array(list)
 }
 
 private fun createJson(value: Any): Json {
     return when (value) {
+        is Json -> value
         is Boolean -> Json.Boolean(value)
         is Number -> Json.Number(value)
         is String -> Json.String(value)
