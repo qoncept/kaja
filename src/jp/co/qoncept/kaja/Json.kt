@@ -170,7 +170,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return this.value[key]?.let { Result.Success<Json, JsonException>(it) } ?: Result.Failure(MissingKeyException(this, key))
         }
-        override fun toString(): kotlin.String = "{${value.entries.map { """"${JSONObject.quote(it.key)}:${it.value}""" }.joinToString(",")}}"
+        override fun toString(): kotlin.String = "{${value.entries.map { """${JSONObject.quote(it.key)}:${it.value}""" }.joinToString(",")}}"
     }
 
     object Null : Json() {

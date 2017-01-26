@@ -330,13 +330,23 @@ class JsonTest {
 
         @Test
         fun testToString() {
-            val jsonString = value.toString()
-            assertTrue(jsonString.contains(""""boolean":true"""))
-            assertTrue(jsonString.contains(""""number":0"""))
-            assertTrue(jsonString.contains(""""string\\\"key\"\n":"string\\\"value\"\n""""))
-            assertTrue(jsonString.contains(""""array":[]"""))
-            assertTrue(jsonString.contains(""""jsonNull":null"""))
-            assertTrue(jsonString.contains(""""object":{}"""))
+            run {
+                val jsonString = value.toString()
+                assertTrue(jsonString.contains(""""boolean":true"""))
+                assertTrue(jsonString.contains(""""number":0"""))
+                assertTrue(jsonString.contains(""""string\\\"key\"\n":"string\\\"value\"\n""""))
+                assertTrue(jsonString.contains(""""array":[]"""))
+                assertTrue(jsonString.contains(""""jsonNull":null"""))
+                assertTrue(jsonString.contains(""""object":{}"""))
+                assertEquals(jsonString.first(), '{')
+                assertEquals(jsonString.last(), '}')
+            }
+            run {
+                val json = Json.of(mapOf(
+                        "foo" to Json.of(42)
+                ))
+                assertEquals(json.toString(), """{"foo":42}""")
+            }
         }
     }
 
