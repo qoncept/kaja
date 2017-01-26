@@ -63,6 +63,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Boolean"))
         }
+        override fun toString(): kotlin.String = value.toString()
     }
 
     class Number(val value: kotlin.Number) : Json() {
@@ -97,6 +98,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.Number"))
         }
+        override fun toString(): kotlin.String = value.toString()
     }
 
     class String(val value: kotlin.String) : Json() {
@@ -120,6 +122,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "kotlin.String"))
         }
+        override fun toString(): kotlin.String = JSONObject.quote(value)
     }
 
     class Array(val value: List<Json>) : Json() {
@@ -143,6 +146,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "Array"))
         }
+        override fun toString(): kotlin.String = "[${value.joinToString(",")}]"
     }
 
     class Object(val value: Map<kotlin.String, Json>) : Json() {
@@ -166,6 +170,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return this.value[key]?.let { Result.Success<Json, JsonException>(it) } ?: Result.Failure(MissingKeyException(this, key))
         }
+        override fun toString(): kotlin.String = "{${value.entries.map { """"${JSONObject.quote(it.key)}:${it.value}""" }.joinToString(",")}}"
     }
 
     object Null : Json() {
@@ -189,6 +194,7 @@ sealed class Json {
         override operator fun get(key: kotlin.String): Result<Json, JsonException> {
             return Result.Failure(TypeMismatchException(this, "Null"))
         }
+        override fun toString(): kotlin.String = "null"
     }
 
     companion object {

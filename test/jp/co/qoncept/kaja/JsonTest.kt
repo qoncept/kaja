@@ -87,12 +87,17 @@ class JsonTest {
         fun testGet() {
             assertTrue(value["boolean"].exception is TypeMismatchException)
         }
+
+        @Test
+        fun testToString() {
+            assertEquals(value.toString(), "true")
+        }
     }
 
     class NumberTest {
         val intValue = Json.Number(1)
         val longValue = Json.Number(2147483648)
-        val doubleValue = Json.Number(0.1)
+        val doubleValue = Json.Number(0.5)
         @Test
         fun testBoolean() {
             assertTrue(intValue.boolean.exception is TypeMismatchException)
@@ -118,7 +123,7 @@ class JsonTest {
         fun testDouble() {
             assertEquals(intValue.double.value, 1.0)
             assertEquals(longValue.double.value, 2147483648.0)
-            assertEquals(doubleValue.double.value, 0.1)
+            assertEquals(doubleValue.double.value, 0.5)
         }
 
         @Test
@@ -148,10 +153,17 @@ class JsonTest {
             assertTrue(longValue["long"].exception is TypeMismatchException)
             assertTrue(doubleValue["double"].exception is TypeMismatchException)
         }
+
+        @Test
+        fun testToString() {
+            assertEquals(intValue.toString(), "1")
+            assertEquals(longValue.toString(), "2147483648")
+            assertEquals(doubleValue.toString(), "0.5")
+        }
     }
 
     class StringTest {
-        val value = Json.String("string")
+        val value = Json.String("string\\\"abc\"\n")
         @Test
         fun testBoolean() {
             assertTrue(value.boolean.exception is TypeMismatchException)
@@ -174,7 +186,7 @@ class JsonTest {
 
         @Test
         fun testString() {
-            assertEquals(value.string.value, "string")
+            assertEquals(value.string.value, "string\\\"abc\"\n")
         }
 
         @Test
@@ -190,6 +202,11 @@ class JsonTest {
         @Test
         fun testGet() {
             assertTrue(value["string"].exception is TypeMismatchException)
+        }
+
+        @Test
+        fun testToString() {
+            assertEquals(value.toString(), """"string\\\"abc\"\n"""")
         }
     }
 
@@ -239,6 +256,11 @@ class JsonTest {
         fun testGet() {
             assertTrue(value["array"].exception is TypeMismatchException)
         }
+
+        @Test
+        fun testToString() {
+            assertEquals(value.toString(), "[true,false]")
+        }
     }
 
     class ObjectTest {
@@ -246,7 +268,7 @@ class JsonTest {
             val value = Json.Object(mapOf(
                     "boolean" to Json.Boolean(true),
                     "number" to Json.Number(0),
-                    "string" to Json.String("string"),
+                    "string\\\"key\"\n" to Json.String("string\\\"value\"\n"),
                     "array" to Json.Array(listOf()),
                     "jsonNull" to Json.Null,
                     "object" to Json.Object(mapOf())
@@ -288,7 +310,7 @@ class JsonTest {
             assertEquals(value.map.value!!.size, 6)
             assertEquals(value.map.value!!["boolean"]!!.boolean.value, true)
             assertEquals(value.map.value!!["number"]!!.int.value, 0)
-            assertEquals(value.map.value!!["string"]!!.string.value, "string")
+            assertEquals(value.map.value!!["string\\\"key\"\n"]!!.string.value, "string\\\"value\"\n")
             assertTrue(value.map.value!!["array"]!!.list.value is List)
             assertEquals(value.map.value!!["jsonNull"]!!, Json.Null as Json)
             assertTrue(value.map.value!!["object"]!!.map.value is Map)
@@ -299,11 +321,22 @@ class JsonTest {
         fun testGet() {
             assertEquals(value["boolean"].value!!.boolean.value, true)
             assertEquals(value["number"].value!!.int.value, 0)
-            assertEquals(value["string"].value!!.string.value, "string")
+            assertEquals(value["string\\\"key\"\n"].value!!.string.value, "string\\\"value\"\n")
             assertTrue(value["array"].value!!.list.value is List)
             assertEquals(value["jsonNull"].value, Json.Null as Json)
             assertTrue(value["object"].value!!.map.value is Map)
             assertTrue(value["null"].exception is MissingKeyException)
+        }
+
+        @Test
+        fun testToString() {
+            val jsonString = value.toString()
+            assertTrue(jsonString.contains(""""boolean":true"""))
+            assertTrue(jsonString.contains(""""number":0"""))
+            assertTrue(jsonString.contains(""""string\\\"key\"\n":"string\\\"value\"\n""""))
+            assertTrue(jsonString.contains(""""array":[]"""))
+            assertTrue(jsonString.contains(""""jsonNull":null"""))
+            assertTrue(jsonString.contains(""""object":{}"""))
         }
     }
 
@@ -347,6 +380,11 @@ class JsonTest {
         @Test
         fun testGet() {
             assertTrue(value["jsonNull"].exception is TypeMismatchException)
+        }
+
+        @Test
+        fun testToString() {
+            assertEquals(value.toString(), "null")
         }
     }
 
