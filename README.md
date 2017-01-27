@@ -26,7 +26,7 @@ The code above is one to parse JSONs formatted like the following
         "General relativity",
         "Special relativity",
         "Photoelectric effect",
-        "Massâenergy equivalence",
+        "Mass-energy equivalence",
         "Theory of Brownian motion"
     ]
 }

@@ -30,7 +30,7 @@ class JsonTest {
                 |        "General relativity",
                 |        "Special relativity",
                 |        "Photoelectric effect",
-                |        "Mass–energy equivalence",
+                |        "Mass-energy equivalence",
                 |        "Theory of Brownian motion"
                 |    ]
                 |}""".trimMargin()
@@ -54,7 +54,7 @@ class JsonTest {
                     "General relativity",
                     "Special relativity",
                     "Photoelectric effect",
-                    "Mass–energy equivalence",
+                    "Mass-energy equivalence",
                     "Theory of Brownian motion"
             ))
         }
