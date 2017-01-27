@@ -16,14 +16,23 @@ class JsonTest {
         fun testExample() {
             data class Person(
                     val firstName: String,
+                    val middleName: String?,
                     val lastName: String,
-                    val age: Int
+                    val age: Int,
+                    val knownFor: List<String>
             )
 
             val jsonString = """{
-                |  "firstName": "Albert",
-                |  "lastName": "Einstein",
-                |  "age": 28
+                |    "firstName": "Albert",
+                |    "lastName": "Einstein",
+                |    "age": 76,
+                |    "knownFor": [
+                |        "General relativity",
+                |        "Special relativity",
+                |        "Photoelectric effect",
+                |        "Mass–energy equivalence",
+                |        "Theory of Brownian motion"
+                |    ]
                 |}""".trimMargin()
 
             val json: Result<Json, JsonException>
@@ -32,16 +41,26 @@ class JsonTest {
             val person: Result<Person, JsonException>
                     = curry(::Person) mp
                         json["firstName"].string ap
+                        json["middleName"].string.nullIfMissingKey() ap
                         json["lastName"] .string ap
-                        json["age"].int
+                        json["age"].int ap
+                        json["knownFor"].list(Json::string)
 
             /**/ assertEquals(person.value!!.firstName, "Albert")
+            /**/ assertEquals(person.value!!.middleName, null)
             /**/ assertEquals(person.value!!.lastName, "Einstein")
-            /**/ assertEquals(person.value!!.age, 28)
+            /**/ assertEquals(person.value!!.age, 76)
+            /**/ assertEquals(person.value!!.knownFor, listOf(
+                    "General relativity",
+                    "Special relativity",
+                    "Photoelectric effect",
+                    "Mass–energy equivalence",
+                    "Theory of Brownian motion"
+            ))
         }
 
-        fun <A, B, C, D> curry(function: (A, B, C) -> D): (A) -> (B) -> (C) -> D {
-            return { a -> { b -> { c -> function(a, b, c) } } }
+        fun <A, B, C, D, E, Z> curry(function: (A, B, C, D, E) -> Z): (A) -> (B) -> (C) -> (D) -> (E) -> Z {
+            return { a -> { b -> { c -> { d -> { e -> function(a, b, c, d, e) } } } } }
         }
     }
 
