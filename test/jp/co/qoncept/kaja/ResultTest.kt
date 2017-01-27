@@ -7,7 +7,7 @@ import org.testng.annotations.Test
 
 class ResultTest {
     @Test
-    fun testIfMissingKey() {
+    fun testOptionalWithDefaultValue() {
         data class Person(
                 val firstName: String,
                 val middleName: String,
@@ -23,7 +23,7 @@ class ResultTest {
         run {
             val person = curry(::Person) mp
                     json["firstName"].string ap
-                    json["middleName"].string.ifMissingKey("von") ap
+                    json["middleName"].string.optional("von") ap
                     json["lastName"].string ap
                     json["age"].int
 
@@ -36,7 +36,7 @@ class ResultTest {
         run {
             val person = curry(::Person) mp
                     json["firstName"].string ap
-                    json.string.ifMissingKey("von") ap
+                    json.string.optional("von") ap
                     json["lastName"].string ap
                     json["age"].int
 
@@ -45,7 +45,7 @@ class ResultTest {
     }
 
     @Test
-    fun testNullIfMissingKey() {
+    fun testOptional() {
         data class Person(
                 val firstName: String,
                 val middleName: String?,
@@ -61,7 +61,7 @@ class ResultTest {
         run {
             val person = curry(::Person) mp
                     json["firstName"].string ap
-                    json["middleName"].string.nullIfMissingKey() ap
+                    json["middleName"].string.optional ap
                     json["lastName"].string ap
                     json["age"].int
 
@@ -74,7 +74,7 @@ class ResultTest {
         run {
             val person = curry(::Person) mp
                     json["firstName"].string ap
-                    json.string.nullIfMissingKey() ap
+                    json.string.optional ap
                     json["lastName"].string ap
                     json["age"].int
 

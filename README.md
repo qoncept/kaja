@@ -4,15 +4,15 @@ _Kaja_ is a type-safe JSON parser/decoder for Kotlin inspired by [Argo](https://
 
 ```kotlin
 val json: Result<Json, JsonException>
-        = Json.parse(jsonString)
+    = Json.parse(jsonString)
 
 val person: Result<Person, JsonException>
-        = curry(::Person) mp
-            json["firstName"].string ap
-            json["middleName"].string.nullIfMissingKey() ap
-            json["lastName"] .string ap
-            json["age"].int ap
-            json["knownFor"].list(Json::string)
+    = curry(::Person) mp
+        json["firstName"].string ap
+        json["middleName"].string.optional ap
+        json["lastName"] .string ap
+        json["age"].int ap
+        json["knownFor"].list(Json::string)
 ```
 
 The code above is one to parse JSONs formatted like the following

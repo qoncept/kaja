@@ -40,22 +40,21 @@ fun <T> Result<Json, JsonException>.map(decode: (Json) -> Result<T, JsonExceptio
     return flatMap { it.map(decode) }
 }
 
-fun <T> Result<T, JsonException>.ifMissingKey(alternative: T): Result<T, JsonException> {
+fun <T> Result<T, JsonException>.optional(defaultValue: T): Result<T, JsonException> {
     return when (this) {
         is Result.Success -> this
         is Result.Failure -> when (exception) {
-            is MissingKeyException -> Result.Success(alternative)
+            is MissingKeyException -> Result.Success(defaultValue)
             else -> this
         }
     }
 }
 
-fun <T> Result<T, JsonException>.nullIfMissingKey(): Result<T?, JsonException> {
-    return when (this) {
-        is Result.Success -> Result.Success(value)
-        is Result.Failure -> when (exception) {
-            is MissingKeyException -> Result.Success(null)
-            else -> Result.Failure(exception)
+val <T> Result<T, JsonException>.optional: Result<T?, JsonException>
+    get() = when (this) {
+            is Result.Success -> Result.Success(value)
+            is Result.Failure -> when (exception) {
+                is MissingKeyException -> Result.Success(null)
+                else -> Result.Failure(exception)
+            }
         }
-    }
-}
