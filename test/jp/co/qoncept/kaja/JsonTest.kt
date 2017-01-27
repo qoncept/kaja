@@ -42,7 +42,7 @@ class JsonTest {
                     = curry(::Person) mp
                         json["firstName"].string ap
                         json["middleName"].string.optional ap
-                        json["lastName"] .string ap
+                        json["lastName"].string ap
                         json["age"].int ap
                         json["knownFor"].list(Json::string)
 
