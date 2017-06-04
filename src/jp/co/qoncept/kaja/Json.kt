@@ -245,7 +245,7 @@ sealed class Json {
         }
 
         fun parse(inputStream: InputStream): Result<Json, JsonException> {
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
             val string = bufferedReader.lineSequence().joinToString("")
             bufferedReader.close()
 
