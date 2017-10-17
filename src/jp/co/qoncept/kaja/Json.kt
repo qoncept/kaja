@@ -260,7 +260,7 @@ sealed class Json {
 
 private fun createJson(value: JSONObject): Json {
     if (value == JSONObject.NULL) { return Json.Null }
-    val entries = value.keySet().map { key -> key to createJson(value.get(key)) }.toTypedArray()
+    val entries = value.keys().asSequence().map { key -> key to createJson(value.get(key)) }.toList().toTypedArray()
     val map = mapOf(*entries)
     return Json.Object(map)
 }
