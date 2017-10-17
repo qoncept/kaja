@@ -456,6 +456,36 @@ class JsonTest {
         }
     }
 
+    class ParseElementTest {
+        @Test
+        fun testParseBoolean() {
+            val str = """{ "key": true }"""
+            val json = Json.parse(str)
+            assertTrue(json["key"].boolean.value == true)
+        }
+
+        @Test
+        fun testParseNumber() {
+            val str = """{ "key": 12 }"""
+            val json = Json.parse(str)
+            assertTrue(json["key"].int.value == 12)
+        }
+
+        @Test
+        fun testParseString() {
+            val str = """{ "key": "string" }"""
+            val json = Json.parse(str)
+            assertTrue(json["key"].string.value == "string")
+        }
+
+        @Test
+        fun testParseNull() {
+            val str = """{ "key": null }"""
+            val json = Json.parse(str)
+            assertTrue(json["key"].value == Json.Null)
+        }
+    }
+
     class ParseTest {
         companion object {
             val jsonObjectString = """{
