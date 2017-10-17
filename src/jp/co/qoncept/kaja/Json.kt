@@ -278,6 +278,7 @@ private fun createJson(value: Any): Json {
         is String -> Json.String(value)
         is JSONArray -> createJson(value)
         is JSONObject -> createJson(value)
+        JSONObject.NULL -> Json.Null
         else -> throw IllegalArgumentException(value.javaClass.name)
     }
 }
